@@ -1,0 +1,34 @@
+{
+    "name": "zendframework/zend-expressive-fastroute",
+    "description": "FastRoute integration for Expressive",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "expressive",
+        "FastRoute",
+        "http",
+        "middleware",
+        "psr",
+        "psr-7"
+    ],
+    "require": {
+        "php": ">=5.5",
+        "psr/http-message": "^1.0",
+        "zendframework/zend-expressive": "^0.4"
+    },
+    "require-dev": {
+        "nikic/fast-route": "^0.6.0",
+        "phpunit/phpunit": "^4.7",
+        "squizlabs/php_codesniffer": "^2.3"
+    },
+    "autoload": {
+      "psr-4": {
+        "Zend\\Expressive\\Router\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "ZendTest\\Expressive\\Router\\": "test/"
+      }
+    }
+}
