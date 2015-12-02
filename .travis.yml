@@ -28,8 +28,8 @@ install:
   - composer info -i
 
 script:
-  - ./vendor/bin/phpunit
-  - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then ./vendor/bin/phpcs ; fi
+  - composer test
+  - if [[ $EXECUTE_CS_CHECK == 'true' ]]; then composer cs ; fi
 
 notifications:
   email: true
