@@ -2,7 +2,9 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.3.1 - TBD
+## 1.0.0 - 2015-12-07
+
+First stable release.
 
 ### Added
 
