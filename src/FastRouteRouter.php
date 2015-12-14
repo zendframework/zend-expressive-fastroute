@@ -216,26 +216,31 @@ class FastRouteRouter implements RouterInterface
      */
     private function marshalMatchedRoute(array $result, $method)
     {
-        $path       = $result[1];
-        $middleware = array_reduce($this->routes, function ($middleware, $route) use ($path, $method) {
-            if ($middleware) {
-                return $middleware;
+        $path  = $result[1];
+        $route = array_reduce($this->routes, function ($matched, $route) use ($path, $method) {
+            if ($matched) {
+                return $matched;
             }
 
             if ($path !== $route->getPath()) {
-                return $middleware;
+                return $matched;
             }
 
             if (! $route->allowsMethod($method)) {
-                return $middleware;
+                return $matched;
             }
 
-            return $route->getMiddleware();
+            return $route;
         }, false);
 
+        if (false === $route) {
+            // This likely should never occur, but is present for completeness.
+            return RouteResult::fromRouteFailure();
+        }
+
         return RouteResult::fromRouteMatch(
-            $path,
-            $middleware,
+            $route->getName(),
+            $route->getMiddleware(),
             $result[2]
         );
     }
