@@ -154,7 +154,7 @@ class FastRouteRouterTest extends TestCase
         $result = $router->match($request->reveal());
         $this->assertInstanceOf(RouteResult::class, $result);
         $this->assertTrue($result->isSuccess());
-        $this->assertEquals('/foo', $result->getMatchedRouteName());
+        $this->assertEquals('/foo^GET', $result->getMatchedRouteName());
         $this->assertEquals('foo', $result->getMatchedMiddleware());
         $this->assertSame(['bar' => 'baz'], $result->getMatchedParams());
     }
@@ -234,5 +234,33 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('/foo', $router->generateUri('foo-list'));
         $this->assertEquals('/foo/42', $router->generateUri('foo', ['id' => 42]));
         $this->assertEquals('/bar/BAZ', $router->generateUri('bar', ['baz' => 'BAZ']));
+    }
+
+    public function testReturnedRouteResultShouldContainRouteName()
+    {
+        $route = new Route('/foo', 'foo', ['GET'], 'foo-route');
+
+        $uri     = $this->prophesize(UriInterface::class);
+        $uri->getPath()->willReturn('/foo');
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getUri()->willReturn($uri);
+        $request->getMethod()->willReturn('GET');
+
+        $this->dispatcher->dispatch('GET', '/foo')->willReturn([
+            Dispatcher::FOUND,
+            '/foo',
+            ['bar' => 'baz']
+        ]);
+
+        $this->fastRouter->addRoute(['GET'], '/foo', '/foo')->shouldBeCalled();
+        $this->fastRouter->getData()->shouldBeCalled();
+
+        $router = $this->getRouter();
+        $router->addRoute($route); // Must add, so we can determine middleware later
+        $result = $router->match($request->reveal());
+        $this->assertInstanceOf(RouteResult::class, $result);
+        $this->assertTrue($result->isSuccess());
+        $this->assertEquals('foo-route', $result->getMatchedRouteName());
     }
 }

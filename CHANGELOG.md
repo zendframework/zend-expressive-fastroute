@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 1.0.1 - TBD
+## 1.0.1 - 2015-12-14
 
 ### Added
 
@@ -36,7 +36,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#3](https://github.com/zendframework/zend-expressive-fastroute/pull/3) fixes
+  an issue in how the `RouteResult` was marshaled on success. Previously, the
+  path was used for the matched route name; now the route name is properly used.
 
 ## 1.0.0 - 2015-12-07
 
