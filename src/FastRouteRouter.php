@@ -146,6 +146,19 @@ class FastRouteRouter implements RouterInterface
             $path = preg_replace($pattern, $value, $path);
         }
 
+        // 1. remove optional segments' ending delimiters
+        // 2. split path into an array of optional segments and remove those
+        // containing unsubstituted parameters starting from the last segment
+        $path = str_replace(']', '', $path);
+        $segs = array_reverse(explode('[', $path));
+        foreach ($segs as $n => $seg) {
+            if (strpos($seg, '{') !== false && ! isset($segs[$n - 1])) {
+                unset($segs[$n]);
+            }
+        }
+        $segs = array_reverse($segs);
+        $path = implode('', $segs);
+
         return $path;
     }
 
