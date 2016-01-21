@@ -243,10 +243,17 @@ class FastRouteRouter implements RouterInterface
             return RouteResult::fromRouteFailure();
         }
 
+        $params = $result[2];
+
+        $options = $route->getOptions();
+        if (!empty($options['defaults'])) {
+            $params = array_merge($options['defaults'], $params);
+        }
+
         return RouteResult::fromRouteMatch(
             $route->getName(),
             $route->getMiddleware(),
-            $result[2]
+            $params
         );
     }
 
