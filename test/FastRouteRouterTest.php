@@ -224,16 +224,27 @@ class FastRouteRouterTest extends TestCase
         $route2 = new Route('/foo', 'foo', ['GET'], 'foo-list');
         $route3 = new Route('/foo/{id:\d+}', 'foo', ['GET'], 'foo');
         $route4 = new Route('/bar/{baz}', 'bar', Route::HTTP_METHOD_ANY, 'bar');
+        $route5 = new Route('/index[/{page:\d+}]', 'foo', ['GET'], 'index');
+        $route6 = new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra');        
 
         $router->addRoute($route1);
         $router->addRoute($route2);
         $router->addRoute($route3);
         $router->addRoute($route4);
+        $router->addRoute($route5);
+        $router->addRoute($route6);
 
         $this->assertEquals('/foo', $router->generateUri('foo-create'));
         $this->assertEquals('/foo', $router->generateUri('foo-list'));
         $this->assertEquals('/foo/42', $router->generateUri('foo', ['id' => 42]));
         $this->assertEquals('/bar/BAZ', $router->generateUri('bar', ['baz' => 'BAZ']));
+        $this->assertEquals('/index', $router->generateUri('index'));
+        $this->assertEquals('/index/42', $router->generateUri('index', ['page' => 42]));
+        $this->assertEquals('/extra/42', $router->generateUri('extra', ['page' => 42]));
+        $this->assertEquals('/extra/42/optional-segment', $router->generateUri('extra', [
+            'page'  => 42,
+            'extra' => 'segment'
+        ]));
     }
 
     public function testReturnedRouteResultShouldContainRouteName()
