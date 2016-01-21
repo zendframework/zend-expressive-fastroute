@@ -225,7 +225,7 @@ class FastRouteRouterTest extends TestCase
         $route3 = new Route('/foo/{id:\d+}', 'foo', ['GET'], 'foo');
         $route4 = new Route('/bar/{baz}', 'bar', Route::HTTP_METHOD_ANY, 'bar');
         $route5 = new Route('/index[/{page:\d+}]', 'foo', ['GET'], 'index');
-        $route6 = new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra');        
+        $route6 = new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra');
 
         $router->addRoute($route1);
         $router->addRoute($route2);
