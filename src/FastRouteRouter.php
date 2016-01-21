@@ -156,8 +156,7 @@ class FastRouteRouter implements RouterInterface
                 unset($segs[$n]);
             }
         }
-        $segs = array_reverse($segs);
-        $path = implode('', $segs);
+        $path = implode('', array_reverse($segs));
 
         return $path;
     }
