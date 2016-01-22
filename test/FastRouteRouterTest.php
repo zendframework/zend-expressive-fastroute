@@ -274,4 +274,18 @@ class FastRouteRouterTest extends TestCase
         $this->assertTrue($result->isSuccess());
         $this->assertEquals('foo-route', $result->getMatchedRouteName());
     }
+
+    /**
+     * @expectedException \Zend\Expressive\Router\Exception\InvalidArgumentException
+     */
+    public function testExceptionForUncompleteUriSubstitutions()
+    {
+        $router = new FastRouteRouter();
+
+        $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
+
+        $router->addRoute($route);
+
+        $router->generateUri('foo', ['extra' => 'segment']);
+    }
 }
