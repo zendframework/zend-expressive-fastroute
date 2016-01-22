@@ -14,7 +14,7 @@ use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Expressive\Exception;
+use Zend\Expressive\Router\Exception;
 
 /**
  * Router implementation bridging nikic/fast-route.
