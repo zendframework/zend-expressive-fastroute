@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- [#4] FastRoute minimum version has been bumped to 0.7.*. No BC break is expected by this change, but you may
+- [#4] FastRoute minimum version has been bumped to ~0.7.0. No BC break is expected by this change, but you may
 want to make sure to test your application to confirm it.
 
 ### Deprecated
