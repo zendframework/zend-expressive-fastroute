@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.0.2 - TBD
+## 1.1.0 - TBD
 
 ### Added
 
-- Nothing.
+- [#4] FastRoute minimum version has been bumped to 0.7.*. No BC break is expected by this change, but you may
+want to make sure to test your application to confirm it.
 
 ### Deprecated
 
