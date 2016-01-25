@@ -148,15 +148,15 @@ class FastRouteRouter implements RouterInterface
 
         // 1. remove optional segments' ending delimiters
         // 2. split path into an array of optional segments and remove those
-        // containing unsubstituted parameters starting from the last segment
+        //    containing unsubstituted parameters starting from the last segment
         $path = str_replace(']', '', $path);
         $segs = array_reverse(explode('[', $path));
         foreach ($segs as $n => $seg) {
             if (strpos($seg, '{') !== false) {
                 if (isset($segs[$n - 1])) {
                     throw new Exception\InvalidArgumentException(
-                        'Optional segments with unsubstituted parameters cannot'
-                        . ' contain segments with substituted parameters'
+                        'Optional segments with unsubstituted parameters cannot '
+                        . 'contain segments with substituted parameters when using FastRoute'
                     );
                 }
                 unset($segs[$n]);

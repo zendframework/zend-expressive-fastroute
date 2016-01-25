@@ -14,6 +14,7 @@ use FastRoute\RouteCollector;
 use PHPUnit_Framework_TestCase as TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
+use Zend\Expressive\Router\Exception\InvalidArgumentException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
@@ -275,17 +276,13 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('foo-route', $result->getMatchedRouteName());
     }
 
-    /**
-     * @expectedException \Zend\Expressive\Router\Exception\InvalidArgumentException
-     */
-    public function testExceptionForUncompleteUriSubstitutions()
+    public function testGenerateUriRaisesExceptionForIncompleteUriSubstitutions()
     {
         $router = new FastRouteRouter();
-
         $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
-
         $router->addRoute($route);
 
+        $this->setExpectedException(InvalidArgumentException::class, 'unsubstituted parameters');
         $router->generateUri('foo', ['extra' => 'segment']);
     }
 }
