@@ -18,7 +18,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#4](https://github.com/zendframework/zend-expressive-fastroute/pull/4) fixes
+  URI generation when optional segments are in place, and ensures that if an
+  optional segment with a placeholder is missing, but followed by one that is
+  present, an exception is raised.
 
 ## 1.1.0 - 2016-01-25
 
