@@ -138,8 +138,13 @@ class FastRouteRouter implements RouterInterface
             ));
         }
 
-        $route = $this->routes[$name];
-        $path  = $route->getPath();
+        $route   = $this->routes[$name];
+        $path    = $route->getPath();
+        $options = $route->getOptions();
+
+        if (!empty($options['defaults'])) {
+            $substitutions = array_merge($options['defaults'], $substitutions);
+        }
 
         foreach ($substitutions as $key => $value) {
             $pattern = sprintf('#\{%s(:[^}]+)?\}#', preg_quote($key));
@@ -256,10 +261,17 @@ class FastRouteRouter implements RouterInterface
             return RouteResult::fromRouteFailure();
         }
 
+        $params = $result[2];
+
+        $options = $route->getOptions();
+        if (!empty($options['defaults'])) {
+            $params = array_merge($options['defaults'], $params);
+        }
+
         return RouteResult::fromRouteMatch(
             $route->getName(),
             $route->getMiddleware(),
-            $result[2]
+            $params
         );
     }
 
