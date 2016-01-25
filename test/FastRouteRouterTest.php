@@ -385,5 +385,5 @@ class FastRouteRouterTest extends TestCase
         $uri24 = $router->generateUri('bar', ['param1' => '123', 'param2' => '456']);
         $this->assertEquals($uri24, '/bar/123/456');
         //----------------------------------------------------------------------
-    }    
+    }
 }
