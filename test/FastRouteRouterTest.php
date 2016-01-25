@@ -263,4 +263,37 @@ class FastRouteRouterTest extends TestCase
         $this->assertTrue($result->isSuccess());
         $this->assertEquals('foo-route', $result->getMatchedRouteName());
     }
+
+    public function testUriGenerationSubstituionsWithDefaultOptions()
+    {
+        $router = new FastRouteRouter();
+
+        $route = new Route('/foo/{param1}/{param2}', 'foo', ['GET'], 'foo');
+        $route->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+                'param2' => 'def',
+            ]
+        ]);
+
+        $router->addRoute($route);
+
+        // both param1 and params2 are missing => use route defaults
+        $uri1 = $router->generateUri('foo');
+        $this->assertEquals($uri1, '/foo/abc/def');
+
+        // param1 is passed to the uri generator => use it
+        // param2 is missing => use route default
+        $uri2 = $router->generateUri('foo', ['param1' => '123']);
+        $this->assertEquals($uri2, '/foo/123/def');
+
+        // param1 is missing => use route default
+        // param2 is passed to the uri generator => use it
+        $uri3 = $router->generateUri('foo', ['param2' => '456']);
+        $this->assertEquals($uri3, '/foo/abc/456');
+
+        // both param1 and param2 are passed to the uri generator
+        $uri4 = $router->generateUri('foo', ['param1' => '123', 'param2' => '456']);
+        $this->assertEquals($uri4, '/foo/123/456');
+    }    
 }
