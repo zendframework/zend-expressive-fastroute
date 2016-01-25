@@ -285,4 +285,105 @@ class FastRouteRouterTest extends TestCase
         $this->setExpectedException(InvalidArgumentException::class, 'unsubstituted parameters');
         $router->generateUri('foo', ['extra' => 'segment']);
     }
+
+    public function testUriGenerationSubstituionsWithDefaultOptions()
+    {
+        $router = new FastRouteRouter();
+
+        $route = new Route('/foo/{param1}/{param2}', 'foo', ['GET'], 'foo');
+        $route->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+                'param2' => 'def',
+            ]
+        ]);
+
+        $router->addRoute($route);
+
+        // both param1 and params2 are missing => use route defaults
+        $uri1 = $router->generateUri('foo');
+        $this->assertEquals($uri1, '/foo/abc/def');
+
+        // param1 is passed to the uri generator => use it
+        // param2 is missing => use route default
+        $uri2 = $router->generateUri('foo', ['param1' => '123']);
+        $this->assertEquals($uri2, '/foo/123/def');
+
+        // param1 is missing => use route default
+        // param2 is passed to the uri generator => use it
+        $uri3 = $router->generateUri('foo', ['param2' => '456']);
+        $this->assertEquals($uri3, '/foo/abc/456');
+
+        // both param1 and param2 are passed to the uri generator
+        $uri4 = $router->generateUri('foo', ['param1' => '123', 'param2' => '456']);
+        $this->assertEquals($uri4, '/foo/123/456');
+    }
+
+    public function testUriGenerationSubstituionsWithDefaultOptionsAndOptionalParameters()
+    {
+        $router = new FastRouteRouter();
+
+        // 1. Route with required and optional parametesr, both set in the defaults
+        //----------------------------------------------------------------------
+        $route1 = new Route('/foo/{param1}[/{param2}]', 'foo', ['GET'], 'foo');
+        $route1->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+                'param2' => 'def',
+            ]
+        ]);
+        $router->addRoute($route1);
+
+        // required param1 is missing => use route default
+        // optional param2 is missing => use route default
+        $uri11 = $router->generateUri('foo');
+        $this->assertEquals($uri11, '/foo/abc/def');
+
+        // required param1 is passed to the uri generator => use it
+        // optional param2 is missing => useroute default
+        $uri12 = $router->generateUri('foo', ['param1' => '123']);
+        $this->assertEquals($uri12, '/foo/123/def');
+
+        // required param1 is missing => use route default
+        // optional param2 is passed to the uri generator => use it
+        $uri13 = $router->generateUri('foo', ['param2' => '456']);
+        $this->assertEquals($uri13, '/foo/abc/456');
+
+        // both param1 and param2 are passed to the uri generator
+        $uri14 = $router->generateUri('foo', ['param1' => '123', 'param2' => '456']);
+        $this->assertEquals($uri14, '/foo/123/456');
+        //----------------------------------------------------------------------
+
+        // 2. Route with required and optional parameters, only required is set
+        // in the defaults
+        //----------------------------------------------------------------------
+        $route2 = new Route('/bar/{param1}[/{param2}]', 'foo', ['GET'], 'bar');
+        $route2->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+            ]
+        ]);
+
+        $router->addRoute($route2);
+
+        // required param1 is missing => use route default
+        // optional param2 is missing and no route default => skip
+        $uri21 = $router->generateUri('bar');
+        $this->assertEquals($uri21, '/bar/abc');
+
+        // required param1 is passed to the uri generator => use it
+        // optional param2 is missing and no route default => skip
+        $uri22 = $router->generateUri('bar', ['param1' => '123']);
+        $this->assertEquals($uri22, '/bar/123');
+
+        // required param1 is missing => use default
+        // optional param2 is passed to the uri generator => use it
+        $uri23 = $router->generateUri('bar', ['param2' => '456']);
+        $this->assertEquals($uri23, '/bar/abc/456');
+
+        // both param1 and param2 are passed to the uri generator
+        $uri24 = $router->generateUri('bar', ['param1' => '123', 'param2' => '456']);
+        $this->assertEquals($uri24, '/bar/123/456');
+        //----------------------------------------------------------------------
+    }    
 }
