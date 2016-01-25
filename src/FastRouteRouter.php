@@ -14,7 +14,7 @@ use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Expressive\Exception;
+use Zend\Expressive\Router\Exception;
 
 /**
  * Router implementation bridging nikic/fast-route.
@@ -145,6 +145,24 @@ class FastRouteRouter implements RouterInterface
             $pattern = sprintf('#\{%s(:[^}]+)?\}#', preg_quote($key));
             $path = preg_replace($pattern, $value, $path);
         }
+
+        // 1. remove optional segments' ending delimiters
+        // 2. split path into an array of optional segments and remove those
+        //    containing unsubstituted parameters starting from the last segment
+        $path = str_replace(']', '', $path);
+        $segs = array_reverse(explode('[', $path));
+        foreach ($segs as $n => $seg) {
+            if (strpos($seg, '{') !== false) {
+                if (isset($segs[$n - 1])) {
+                    throw new Exception\InvalidArgumentException(
+                        'Optional segments with unsubstituted parameters cannot '
+                        . 'contain segments with substituted parameters when using FastRoute'
+                    );
+                }
+                unset($segs[$n]);
+            }
+        }
+        $path = implode('', array_reverse($segs));
 
         return $path;
     }
