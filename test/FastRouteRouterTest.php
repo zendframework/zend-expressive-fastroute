@@ -227,6 +227,7 @@ class FastRouteRouterTest extends TestCase
         $route4 = new Route('/bar/{baz}', 'bar', Route::HTTP_METHOD_ANY, 'bar');
         $route5 = new Route('/index[/{page:\d+}]', 'foo', ['GET'], 'index');
         $route6 = new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra');
+        $route7 = new Route('/extra[/{page:\d+{2}}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra');
 
         $router->addRoute($route1);
         $router->addRoute($route2);
@@ -234,6 +235,7 @@ class FastRouteRouterTest extends TestCase
         $router->addRoute($route4);
         $router->addRoute($route5);
         $router->addRoute($route6);
+        $router->addRoute($route7);
 
         $this->assertEquals('/foo', $router->generateUri('foo-create'));
         $this->assertEquals('/foo', $router->generateUri('foo-list'));
@@ -244,6 +246,10 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('/extra/42', $router->generateUri('extra', ['page' => 42]));
         $this->assertEquals('/extra/42/optional-segment', $router->generateUri('extra', [
             'page'  => 42,
+            'extra' => 'segment'
+        ]));
+        $this->assertEquals('/extra/2/optional-segment', $router->generateUri('extra', [
+            'page'  => 2,
             'extra' => 'segment'
         ]));
     }
@@ -286,3 +292,4 @@ class FastRouteRouterTest extends TestCase
         $router->generateUri('foo', ['extra' => 'segment']);
     }
 }
+
