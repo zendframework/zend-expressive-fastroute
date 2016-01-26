@@ -250,7 +250,7 @@ class FastRouteRouterTest extends TestCase
         ]));
         $this->assertEquals('/extra/2/optional-segment', $router->generateUri('limit', [
             'page'  => 2,
-            'limit' => 'segment'
+            'extra' => 'segment'
         ]));
     }
 
