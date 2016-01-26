@@ -244,11 +244,11 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('/index', $router->generateUri('index'));
         $this->assertEquals('/index/42', $router->generateUri('index', ['page' => 42]));
         $this->assertEquals('/extra/42', $router->generateUri('extra', ['page' => 42]));
-        $this->assertEquals('/limit/42/optional-segment', $router->generateUri('extra', [
+        $this->assertEquals('/extra/42/optional-segment', $router->generateUri('extra', [
             'page'  => 42,
             'extra' => 'segment'
         ]));
-        $this->assertEquals('/extra/2/optional-segment', $router->generateUri('limit', [
+        $this->assertEquals('/limit/2/optional-segment', $router->generateUri('limit', [
             'page'  => 2,
             'extra' => 'segment'
         ]));
