@@ -15,5 +15,4 @@ $ composer require zendframework/zend-expressive-fastroute
 
 ## Documentation
 
-See the [zend-expressive](https://github.com/zendframework/zend-expressive/blob/master/doc/book)
-documentation tree, or browse online at http://zend-expressive.rtfd.org.
+See the Expressive [FastRoute documentation](https://zendframework.github.io/zend-expressive/features/router/fast-route/).
