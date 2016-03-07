@@ -142,8 +142,9 @@ class FastRouteRouter implements RouterInterface
         $path  = $route->getPath();
 
         foreach ($substitutions as $key => $value) {
-            $pattern = sprintf('#\{%s(:[^}]+)?\}#', preg_quote($key));
+            $pattern = sprintf('#\{%s(:[^}]+)?\}\]?#', preg_quote($key));
             $path = preg_replace($pattern, $value, $path);
+            $path = str_replace('[/', '/', $path);
         }
 
         // 1. remove optional segments' ending delimiters
