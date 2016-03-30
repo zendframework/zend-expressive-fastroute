@@ -2,11 +2,12 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.1.1 - TBD
+## 1.2.0 - TBD
 
 ### Added
 
-- Nothing.
+- Add compatibility with `Zend\Expressive\Router` 1.3.0 by also transferring the route options as part of the
+ RouteResult.
 
 ### Deprecated
 

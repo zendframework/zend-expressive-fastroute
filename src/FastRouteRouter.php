@@ -259,7 +259,8 @@ class FastRouteRouter implements RouterInterface
         return RouteResult::fromRouteMatch(
             $route->getName(),
             $route->getMiddleware(),
-            $result[2]
+            $result[2],
+            $route->getOptions()
         );
     }
 

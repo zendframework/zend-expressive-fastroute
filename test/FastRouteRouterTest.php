@@ -133,6 +133,7 @@ class FastRouteRouterTest extends TestCase
     public function testMatchingRouteShouldReturnSuccessfulRouteResult()
     {
         $route = new Route('/foo', 'foo', ['GET']);
+        $route->setOptions(['custom_param' => 'custom_value']);
 
         $uri     = $this->prophesize(UriInterface::class);
         $uri->getPath()->willReturn('/foo');
@@ -158,6 +159,7 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('/foo^GET', $result->getMatchedRouteName());
         $this->assertEquals('foo', $result->getMatchedMiddleware());
         $this->assertSame(['bar' => 'baz'], $result->getMatchedParams());
+        $this->assertSame(['custom_param' => 'custom_value'], $result->getOptions());
     }
 
     public function testMatchFailureDueToHttpMethodReturnsRouteResultWithAllowedMethods()
