@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.1.1 - TBD
+## 1.2.0 - TBD
 
 ### Added
 
-- Nothing.
+- [#11](https://github.com/zendframework/zend-expressive-fastroute/pull/11) updates
+  the FastRoute minimum version to `^0.8.0`. No BC break is expected by this change,
+  but you should test your application to confirm.
 
 ### Deprecated
 
