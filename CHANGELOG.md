@@ -48,6 +48,9 @@ All notable changes to this project will be documented in this file, in reverse 
   URI generation when optional segments are in place, and ensures that if an
   optional segment with a placeholder is missing, but followed by one that is
   present, an exception is raised.
+- [#8](https://github.com/zendframework/zend-expressive-fastroute/pull/8) fixes
+  URI generation with variable substitution when the variable declaration in the
+  route uses `{X,Y}` quantification.
 
 ## 1.1.0 - 2016-01-25
 
