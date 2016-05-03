@@ -92,7 +92,7 @@ REGEX;
      * @var bool
      */
     private $hasCache = false;
-    
+
     /**
      * Constructor
      *
@@ -159,7 +159,7 @@ REGEX;
         // Inject any pending routes
         $this->injectRoutes();
 
-        $dispatchData = $this->getDispatchData();        
+        $dispatchData = $this->getDispatchData();
 
         $path       = $request->getUri()->getPath();
         $method     = $request->getMethod();
@@ -369,7 +369,7 @@ REGEX;
         if ($this->hasCache) {
             return;
         }
-        
+
         $methods = $route->getAllowedMethods();
 
         if ($methods === Route::HTTP_METHOD_ANY) {
