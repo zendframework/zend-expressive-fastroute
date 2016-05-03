@@ -69,7 +69,7 @@ REGEX;
      *
      * @var bool
      */
-    private $cacheEnabled = true;
+    private $cacheEnabled = false;
 
     /**
      * Cache file path relative to the project directory.
@@ -458,4 +458,3 @@ REGEX;
         );
     }
 }
-
