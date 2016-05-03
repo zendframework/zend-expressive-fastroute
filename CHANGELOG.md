@@ -48,6 +48,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
   This provides feature parity with other routing implementations.
 
+- [#14](https://github.com/zendframework/zend-expressive-fastroute/pull/14) updates
+  the FastRoute minimum version to `^0.8.0`. No BC break is expected by this change,
+  but you should test your application to confirm.
+
 ### Deprecated
 
 - Nothing.
