@@ -24,7 +24,29 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#7](https://github.com/zendframework/zend-expressive-fastroute/pull/7) adds
+  support for merging the `defaults` passed in route options with the matched
+  parameters when returning a route result. As an example, if you define a route
+  as follows:
+
+  ```php
+  use Zend\Expressive\Router\Route;
+
+  $route = new Route(
+      '/category/{category:[a-z]{3,12}[/resource/{resource:\d+}]',
+      'CategoryResource',
+      ['GET'],
+      'category-resource'
+  );
+  $route->setOptions(['defaults' => [
+      'resource' => 1,
+  ]]);
+  ```
+
+  and match against the URL path `/category/foobar`, the route result returned
+  will now also include a `resource` parameter with a value of `1`.
+
+  This provides feature parity with other routing implementations.
 
 ### Deprecated
 
