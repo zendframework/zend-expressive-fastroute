@@ -215,44 +215,48 @@ class FastRouteRouterTest extends TestCase
         $this->assertSame([], $result->getAllowedMethods());
     }
 
+    public function generatedUriProvider()
+    {
+        $routes = [
+            new Route('/foo', 'foo', ['POST'], 'foo-create'),
+            new Route('/foo', 'foo', ['GET'], 'foo-list'),
+            new Route('/foo/{id:\d+}', 'foo', ['GET'], 'foo'),
+            new Route('/bar/{baz}', 'bar', Route::HTTP_METHOD_ANY, 'bar'),
+            new Route('/index[/{page:\d+}]', 'foo', ['GET'], 'index'),
+            new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra'),
+            new Route('/page[/{page:\d+}/{locale:[a-z]{2}}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'limit'),
+        ];
+
+        // @codingStandardsIgnoreStart
+        return [
+            // Test case                 routes   expected URI                   generateUri arguments
+            'foo-create'             => [$routes, '/foo',                        ['foo-create']],
+            'foo-list'               => [$routes, '/foo',                        ['foo-list']],
+            'foo'                    => [$routes, '/foo/42',                     ['foo', ['id' => 42]]],
+            'bar'                    => [$routes, '/bar/BAZ',                    ['bar', ['baz' => 'BAZ']]],
+            'index'                  => [$routes, '/index',                      ['index']],
+            'index-page'             => [$routes, '/index/42',                   ['index', ['page' => 42]]],
+            'extra-42'               => [$routes, '/extra/42',                   ['extra', ['page' => 42]]],
+            'extra-optional-segment' => [$routes, '/extra/42/optional-segment',  ['extra', ['page' => 42, 'extra' => 'segment']]],
+            'limit'                  => [$routes, '/page/2/en/optional-segment', ['limit', ['locale' => 'en', 'page' => 2, 'extra' => 'segment']]],
+        ];
+        // @codingStandardsIgnoreEnd
+    }
+
     /**
-     * @group 53
+     * @group zendframework/zend-expressive#53
+     * @group 8
+     * @dataProvider generatedUriProvider
      */
-    public function testCanGenerateUriFromRoutes()
+    public function testCanGenerateUriFromRoutes(array $routes, $expected, array $generateArgs)
     {
         $router = new FastRouteRouter();
-        $route1 = new Route('/foo', 'foo', ['POST'], 'foo-create');
-        $route2 = new Route('/foo', 'foo', ['GET'], 'foo-list');
-        $route3 = new Route('/foo/{id:\d+}', 'foo', ['GET'], 'foo');
-        $route4 = new Route('/bar/{baz}', 'bar', Route::HTTP_METHOD_ANY, 'bar');
-        $route5 = new Route('/index[/{page:\d+}]', 'foo', ['GET'], 'index');
-        $route6 = new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra');
-        $route7 = new Route('/page[/{page:\d+}/{locale:[a-z]{2}}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'limit');
+        foreach ($routes as $route) {
+            $router->addRoute($route);
+        }
 
-        $router->addRoute($route1);
-        $router->addRoute($route2);
-        $router->addRoute($route3);
-        $router->addRoute($route4);
-        $router->addRoute($route5);
-        $router->addRoute($route6);
-        $router->addRoute($route7);
-
-        $this->assertEquals('/foo', $router->generateUri('foo-create'));
-        $this->assertEquals('/foo', $router->generateUri('foo-list'));
-        $this->assertEquals('/foo/42', $router->generateUri('foo', ['id' => 42]));
-        $this->assertEquals('/bar/BAZ', $router->generateUri('bar', ['baz' => 'BAZ']));
-        $this->assertEquals('/index', $router->generateUri('index'));
-        $this->assertEquals('/index/42', $router->generateUri('index', ['page' => 42]));
-        $this->assertEquals('/extra/42', $router->generateUri('extra', ['page' => 42]));
-        $this->assertEquals('/extra/42/optional-segment', $router->generateUri('extra', [
-            'page'  => 42,
-            'extra' => 'segment'
-        ]));
-        $this->assertEquals('/page/42/en/optional-segment', $router->generateUri('limit', [
-            'locale'=> 'en',
-            'page'  => 2,
-            'extra' => 'segment'
-        ]));
+        $uri = call_user_func_array([$router, 'generateUri'], $generateArgs);
+        $this->assertEquals($expected, $uri);
     }
 
     public function testReturnedRouteResultShouldContainRouteName()
