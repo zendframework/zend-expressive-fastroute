@@ -285,4 +285,102 @@ class FastRouteRouterTest extends TestCase
         $this->setExpectedException(InvalidArgumentException::class, 'unsubstituted parameters');
         $router->generateUri('foo', ['extra' => 'segment']);
     }
+
+    public function uriGeneratorDataProvider()
+    {
+        return [
+            // both param1 and params2 are missing => use route defaults
+            ['/foo/abc/def', []],
+
+            // param1 is passed to the uri generator => use it
+            // param2 is missing => use route default
+            ['/foo/123/def', ['param1' => '123']],
+
+            // param1 is missing => use route default
+            // param2 is passed to the uri generator => use it
+            ['/foo/abc/456', ['param2' => '456']],
+
+            // both param1 and param2 are passed to the uri generator
+            ['/foo/123/456', ['param1' => '123', 'param2' => '456']],
+        ];
+    }
+
+    /**
+     * @dataProvider uriGeneratorDataProvider
+     */
+    public function testUriGenerationSubstitutionsWithDefaultOptions($expectedUri, $params)
+    {
+        $router = new FastRouteRouter();
+
+        $route = new Route('/foo/{param1}/{param2}', 'foo', ['GET'], 'foo');
+        $route->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+                'param2' => 'def',
+            ],
+        ]);
+
+        $router->addRoute($route);
+
+        $this->assertEquals($expectedUri, $router->generateUri('foo', $params));
+    }
+
+    /**
+     * @dataProvider uriGeneratorDataProvider
+     */
+    public function testUriGenerationSubstitutionsWithDefaultsAndOptionalParameters($expectedUri, $params)
+    {
+        $router = new FastRouteRouter();
+
+        $route = new Route('/foo/{param1}/{param2}', 'foo', ['GET'], 'foo');
+        $route->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+                'param2' => 'def',
+            ],
+        ]);
+
+        $router->addRoute($route);
+
+        $this->assertEquals($expectedUri, $router->generateUri('foo', $params));
+    }
+
+    public function uriGeneratorWithPartialDefaultsDataProvider()
+    {
+        return [
+            // required param1 is missing => use route default
+            // optional param2 is missing and no route default => skip it
+            ['/foo/abc', []],
+
+            // required param1 is passed to the uri generator => use it
+            // optional param2 is missing and no route default => skip it
+            ['/foo/123', ['param1' => '123']],
+
+            // required param1 is missing => use default
+            // optional param2 is passed to the uri generator => use it
+            ['/foo/abc/456', ['param2' => '456']],
+
+            // both param1 and param2 are passed to the uri generator
+            ['/foo/123/456', ['param1' => '123', 'param2' => '456']],
+        ];
+    }
+
+    /**
+     * @dataProvider uriGeneratorWithPartialDefaultsDataProvider
+     */
+    public function testUriGenerationSubstitutionsWithPartialDefaultsAndOptionalParameters($expectedUri, $params)
+    {
+        $router = new FastRouteRouter();
+
+        $route = new Route('/foo/{param1}[/{param2}]', 'foo', ['GET'], 'foo');
+        $route->setOptions([
+            'defaults' => [
+                'param1' => 'abc',
+            ],
+        ]);
+
+        $router->addRoute($route);
+
+        $this->assertEquals($expectedUri, $router->generateUri('foo', $params));
+    }
 }
