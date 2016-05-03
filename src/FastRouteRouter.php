@@ -22,6 +22,23 @@ use Zend\Expressive\Router\Exception;
 class FastRouteRouter implements RouterInterface
 {
     /**
+     * Regular expression pattern for identifying a variable subsititution.
+     *
+     * This is an sprintf pattern; the variable name will be substituted for
+     * the final pattern.
+     *
+     * @see \FastRoute\RouteParser\Std for mirror, generic representation.
+     */
+    const VARIABLE_REGEX = <<<'REGEX'
+\{
+    \s* %s \s*
+    (?:
+        : \s* ([^{}]*(?:\{(?-1)\}[^{}]*)*)
+    )?
+\}
+REGEX;
+
+    /**
      * @var callable A factory callback that can return a dispatcher.
      */
     private $dispatcherCallback;
@@ -147,7 +164,10 @@ class FastRouteRouter implements RouterInterface
         }
 
         foreach ($substitutions as $key => $value) {
-            $pattern = sprintf('#\{%s(:[^}]+)?\}#', preg_quote($key));
+            $pattern = sprintf(
+                '~%s~x',
+                sprintf(self::VARIABLE_REGEX, preg_quote($key))
+            );
             $path = preg_replace($pattern, $value, $path);
         }
 
