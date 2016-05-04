@@ -109,12 +109,12 @@ REGEX;
      *     implementation will be used.
      * @param null|callable $dispatcherFactory Callable that will return a
      *     FastRoute dispatcher.
-     * @param array $options Array of custom options.
+     * @param array $config Array of custom configuration options.
      */
     public function __construct(
         RouteCollector $router = null,
         callable $dispatcherFactory = null,
-        array $options = null
+        array $config = null
     ) {
         if (null === $router) {
             $router = $this->createRouter();
@@ -123,12 +123,12 @@ REGEX;
         $this->router = $router;
         $this->dispatcherCallback = $dispatcherFactory;
 
-        if (isset($options['cacheEnabled'])) {
-            $this->cacheEnabled = (bool) $options['cacheEnabled'];
+        if (isset($config['cacheEnabled'])) {
+            $this->cacheEnabled = (bool) $config['cacheEnabled'];
         }
 
-        if (isset($options['cacheFile'])) {
-            $this->cacheFile = (string) $options['cacheFile'];
+        if (isset($config['cacheFile'])) {
+            $this->cacheFile = (string) $config['cacheFile'];
         }
 
         if ($this->cacheEnabled) {
