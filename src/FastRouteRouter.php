@@ -123,12 +123,12 @@ REGEX;
         $this->router = $router;
         $this->dispatcherCallback = $dispatcherFactory;
 
-        if (isset($config['cacheEnabled'])) {
-            $this->cacheEnabled = (bool) $config['cacheEnabled'];
+        if (isset($config['cache_enabled'])) {
+            $this->cacheEnabled = (bool) $config['cache_enabled'];
         }
 
-        if (isset($config['cacheFile'])) {
-            $this->cacheFile = (string) $config['cacheFile'];
+        if (isset($config['cache_file'])) {
+            $this->cacheFile = (string) $config['cache_file'];
         }
 
         if ($this->cacheEnabled) {
