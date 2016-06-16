@@ -94,6 +94,16 @@ REGEX;
     private $hasCache = false;
 
     /**
+     * @const string Configuration key used to enable/disable fastroute caching
+     */
+    const CONFIG_CACHE_ENABLED = 'cache_enabled';
+
+    /**
+     * @const string Configuration key used to set the cache file path
+     */
+    const CONFIG_CACHE_FILE    = 'cache_file';
+
+    /**
      * Constructor
      *
      * Accepts optionally a FastRoute RouteCollector and a callable factory
@@ -123,12 +133,12 @@ REGEX;
         $this->router = $router;
         $this->dispatcherCallback = $dispatcherFactory;
 
-        if (isset($config['cache_enabled'])) {
-            $this->cacheEnabled = (bool) $config['cache_enabled'];
+        if (isset($config[self::CONFIG_CACHE_ENABLED])) {
+            $this->cacheEnabled = (bool) $config[self::CONFIG_CACHE_ENABLED];
         }
 
-        if (isset($config['cache_file'])) {
-            $this->cacheFile = (string) $config['cache_file'];
+        if (isset($config[self::CONFIG_CACHE_FILE])) {
+            $this->cacheFile = (string) $config[self::CONFIG_CACHE_FILE];
         }
 
         if ($this->cacheEnabled) {
