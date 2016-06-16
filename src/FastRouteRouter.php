@@ -133,6 +133,21 @@ REGEX;
         $this->router = $router;
         $this->dispatcherCallback = $dispatcherFactory;
 
+        $this->loadConfig($config);
+    }
+
+    /**
+     * Load configuration parameters
+     *
+     * @param array $config Array of custom configuration options.
+     * @return type
+     */
+    private function loadConfig(array $config = null)
+    {
+        if (null === $config) {
+            return;
+        }
+
         if (isset($config[self::CONFIG_CACHE_ENABLED])) {
             $this->cacheEnabled = (bool) $config[self::CONFIG_CACHE_ENABLED];
         }
