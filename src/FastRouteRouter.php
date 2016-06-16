@@ -140,7 +140,7 @@ REGEX;
      * Load configuration parameters
      *
      * @param array $config Array of custom configuration options.
-     * @return type
+     * @return void
      */
     private function loadConfig(array $config = null)
     {
