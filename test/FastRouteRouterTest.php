@@ -225,6 +225,7 @@ class FastRouteRouterTest extends TestCase
             new Route('/index[/{page:\d+}]', 'foo', ['GET'], 'index'),
             new Route('/extra[/{page:\d+}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'extra'),
             new Route('/page[/{page:\d+}/{locale:[a-z]{2}}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'limit'),
+            new Route('/api/{res:[a-z]+}[/{resId:\d+}[/{rel:[a-z]+}[/{relId:\d+}]]]', 'foo', ['GET'], 'api'),
         ];
 
         // @codingStandardsIgnoreStart
@@ -239,6 +240,10 @@ class FastRouteRouterTest extends TestCase
             'extra-42'               => [$routes, '/extra/42',                   ['extra', ['page' => 42]]],
             'extra-optional-segment' => [$routes, '/extra/42/optional-segment',  ['extra', ['page' => 42, 'extra' => 'segment']]],
             'limit'                  => [$routes, '/page/2/en/optional-segment', ['limit', ['locale' => 'en', 'page' => 2, 'extra' => 'segment']]],
+            'api-optional-regex'     => [$routes, '/api/foo',                    ['api', ['res' => 'foo']]],
+            'api-resource-id'        => [$routes, '/api/foo/1',                  ['api', ['res' => 'foo', 'resId' => 1]]],
+            'api-relation'           => [$routes, '/api/foo/1/bar',              ['api', ['res' => 'foo', 'resId' => 1, 'rel' => 'bar']]],
+            'api-relation-id'        => [$routes, '/api/foo/1/bar/2',            ['api', ['res' => 'foo', 'resId' => 1, 'rel' => 'bar', 'relId' => 2]]],
         ];
         // @codingStandardsIgnoreEnd
     }
