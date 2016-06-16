@@ -438,11 +438,15 @@ REGEX;
      */
     private function loadDispatchData()
     {
-        if (! is_file($this->cacheFile)) {
+        set_error_handler(function () {}, E_WARNING); // suppress php warning
+        $dispatchData = include $this->cacheFile;
+        restore_error_handler();
+
+        // cache file does not exists; return empty array as dispatch data
+        if (false === $dispatchData) {
             return [];
         }
 
-        $dispatchData = require $this->cacheFile;
         if (! is_array($dispatchData)) {
             throw new Exception\RuntimeException(
                 'Invalid cache file "' . $this->cacheFile . '". '
