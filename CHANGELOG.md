@@ -2,29 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.2.0 - TBD
+## 1.2.0 - 2016-06-16
 
 ### Added
 
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.1.2 - TBD
-
-### Added
-
-- Nothing.
+- [#17](https://github.com/zendframework/zend-expressive-fastroute/pull/17) upgraded
+  the dependency to [`nikic/fast-route`](https://github.com/nikic/FastRoute) to
+  [`^1.0.0`](https://github.com/nikic/FastRoute/releases/tag/v1.0.0).
 
 ### Deprecated
 
