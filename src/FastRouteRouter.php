@@ -438,7 +438,11 @@ REGEX;
      */
     private function loadDispatchData()
     {
-        set_error_handler(function () {}, E_WARNING); // suppress php warning
+        set_error_handler(
+            function () {
+            },
+            E_WARNING
+        ); // suppress php warnings
         $dispatchData = include $this->cacheFile;
         restore_error_handler();
 
