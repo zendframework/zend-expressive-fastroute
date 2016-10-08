@@ -239,6 +239,11 @@ class FastRouteRouterTest extends TestCase
             'extra-42'               => [$routes, '/extra/42',                   ['extra', ['page' => 42]]],
             'extra-optional-segment' => [$routes, '/extra/42/optional-segment',  ['extra', ['page' => 42, 'extra' => 'segment']]],
             'limit'                  => [$routes, '/page/2/en/optional-segment', ['limit', ['locale' => 'en', 'page' => 2, 'extra' => 'segment']]],
+            'foo-extra-params'       => [$routes, '/foo/42?bar=baz',             ['foo', ['id' => 42, 'bar' => 'baz']]],
+            'index-extra-params'     => [$routes, '/index?bar=baz&qux=quux',     ['index', ['bar' => 'baz', 'qux' => 'quux']]],
+            'limit-extra-params'     => [$routes, '/page/2/en/optional-segment?foo=bar', ['limit', [
+                'locale' => 'en', 'page' => 2, 'extra' => 'segment', 'foo' => 'bar'
+            ]]],
         ];
         // @codingStandardsIgnoreEnd
     }

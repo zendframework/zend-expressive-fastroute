@@ -163,12 +163,21 @@ REGEX;
             $substitutions = array_merge($options['defaults'], $substitutions);
         }
 
+        $extraParameters = [];
         foreach ($substitutions as $key => $value) {
+            $oldPath = $path;
+
             $pattern = sprintf(
                 '~%s~x',
                 sprintf(self::VARIABLE_REGEX, preg_quote($key))
             );
             $path = preg_replace($pattern, $value, $path);
+
+            // Check if the path changed
+            if ($oldPath === $path) {
+                // The path didn't change, queue parameters for the query string
+                $extraParameters[$key] = $value;
+            }
         }
 
         // 1. remove optional segments' ending delimiters
@@ -188,6 +197,11 @@ REGEX;
             }
         }
         $path = implode('', array_reverse($segs));
+
+        // Add extra parameters to the query
+        if (count($extraParameters) > 0) {
+            $path .= '?' . http_build_query($extraParameters);
+        }
 
         return $path;
     }
