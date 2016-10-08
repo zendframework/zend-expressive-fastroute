@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#21](https://github.com/zendframework/zend-expressive-fastroute/pull/21) adds
+  support for appending extra parameters to the query when generating an URI.
 
 ### Deprecated
 
