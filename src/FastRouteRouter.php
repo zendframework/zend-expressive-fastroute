@@ -136,6 +136,8 @@ REGEX;
      * It does *not* use the pattern to validate that the substitution value is
      * valid beforehand, however.
      *
+     * Extra parameters are added to the query.
+     *
      * @param string $name Route name.
      * @param array $substitutions Key/value pairs to substitute into the route
      *     pattern.
