@@ -367,11 +367,7 @@ REGEX;
             $params = array_merge($options['defaults'], $params);
         }
 
-        return RouteResult::fromRouteMatch(
-            $route->getName(),
-            $route->getMiddleware(),
-            $params
-        );
+        return RouteResult::fromRoute($route, $params);
     }
 
     /**
@@ -406,6 +402,14 @@ REGEX;
 
         if ($methods === Route::HTTP_METHOD_ANY) {
             $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE'];
+        }
+
+        if (in_array('HEAD', $methods, true) && $route->implicitHead()) {
+            unset($methods[array_search('HEAD', $methods)]);
+        }
+
+        if (in_array('OPTIONS', $methods, true) && $route->implicitOptions()) {
+            unset($methods[array_search('OPTIONS', $methods)]);
         }
 
         if (empty($methods)) {

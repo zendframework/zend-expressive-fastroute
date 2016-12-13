@@ -156,6 +156,18 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('/foo^GET', $result->getMatchedRouteName());
         $this->assertEquals('foo', $result->getMatchedMiddleware());
         $this->assertSame(['bar' => 'baz'], $result->getMatchedParams());
+
+        return ['route' => $route, 'result' => $result];
+    }
+
+    /**
+     * @depends testMatchingRouteShouldReturnSuccessfulRouteResult
+     */
+    public function testMatchedRouteResultContainsRoute(array $data)
+    {
+        $route = $data['route'];
+        $result = $data['result'];
+        $this->assertSame($route, $result->getMatchedRoute());
     }
 
     public function testMatchFailureDueToHttpMethodReturnsRouteResultWithAllowedMethods()
