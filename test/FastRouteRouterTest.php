@@ -394,4 +394,69 @@ class FastRouteRouterTest extends TestCase
 
         $this->assertEquals($expectedUri, $router->generateUri('foo', $params));
     }
+
+    public function createCachingRouter(array $config, Route $route)
+    {
+        $router = new FastRouteRouter(null, null, $config);
+        $router->addRoute($route);
+
+        return $router;
+    }
+
+    public function createServerRequestProphecy($path, $method = 'GET')
+    {
+        $uri = $this->prophesize(UriInterface::class);
+        $uri->getPath()->willReturn($path);
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getUri()->will(function () use ($uri) {
+            return $uri->reveal();
+        });
+
+        $request->getMethod()->willReturn($method);
+
+        return $request;
+    }
+
+    public function testFastRouteCache()
+    {
+        $cache_file = __DIR__ . '/fastroute.cache';
+
+        $config = [
+            FastRouteRouter::CONFIG_CACHE_ENABLED => true,
+            FastRouteRouter::CONFIG_CACHE_FILE    => $cache_file,
+        ];
+
+        $request = $this->createServerRequestProphecy('/foo', 'GET');
+
+        $route = new Route('/foo', 'fooHandler', ['GET'], 'foo');
+
+        $router1 = $this->createCachingRouter($config, $route);
+        $router1->match($request->reveal());
+
+        // cache file has been created with the specified path
+        $this->assertTrue(is_file($cache_file));
+
+        $cache1 = file_get_contents($cache_file);
+
+        $router2 = $this->createCachingRouter($config, $route);
+
+        $result = $router2->match($request->reveal());
+
+        $this->assertTrue(is_file($cache_file));
+
+        // reload the cache file content to check for changes
+        $cache2 = file_get_contents($cache_file);
+
+        $this->assertEquals($cache1, $cache2);
+
+        // check that the routes defined and cached by $router1 are seen by
+        // $router2
+        $this->assertInstanceOf(RouteResult::class, $result);
+        $this->assertTrue($result->isSuccess());
+        $this->assertEquals('foo', $result->getMatchedRouteName());
+        $this->assertEquals('fooHandler', $result->getMatchedMiddleware());
+
+        unlink($cache_file);
+    }
 }
