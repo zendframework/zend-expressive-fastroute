@@ -172,9 +172,10 @@ REGEX;
         }
 
         // 1. remove optional segments' ending delimiters
+        //    and remove leftover regex char classes like `:[` and `:prefix-[` (issue #18)
         // 2. split path into an array of optional segments and remove those
         //    containing unsubstituted parameters starting from the last segment
-        $path = str_replace(']', '', $path);
+        $path = preg_replace('/\]|:.*\[/', '', $path);
         $segs = array_reverse(explode('[', $path));
         foreach ($segs as $n => $seg) {
             if (strpos($seg, '{') !== false) {
