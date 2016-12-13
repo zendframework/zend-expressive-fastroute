@@ -6,7 +6,24 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#16](https://github.com/zendframework/zend-expressive-fastroute/pull/16) adds
+  support for FastRoute's caching features. Enable these with the following
+  configuration:
+
+  ```php
+  [
+      'router' => [
+          'fastroute' => [
+              'cache_enabled' => true,                   // boolean
+              'cache_file'    => 'data/cache/fastroute', // specify any location
+          ],
+      ],
+  ]
+  ```
+
+  Once enabled, the first request will build the cache and store it, while
+  subsequent requests will read directly from the cache instead of any routes
+  injected in the router.
 
 ### Deprecated
 
