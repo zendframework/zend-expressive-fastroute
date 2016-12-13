@@ -25,13 +25,17 @@ All notable changes to this project will be documented in this file, in reverse 
   subsequent requests will read directly from the cache instead of any routes
   injected in the router.
 
+- [#23](https://github.com/zendframework/zend-expressive-fastroute/pull/23)
+  adds support for PHP 7.1.
+
 ### Deprecated
 
 - Nothing.
 
 ### Removed
 
-- Nothing.
+- [#23](https://github.com/zendframework/zend-expressive-fastroute/pull/23)
+  removes support for PHP 5.5.
 
 ### Fixed
 
