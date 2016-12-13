@@ -7,6 +7,7 @@
 
 namespace Zend\Expressive\Router;
 
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
@@ -36,6 +37,37 @@ EOT;
      * @const string Configuration key used to set the cache file path
      */
     const CONFIG_CACHE_FILE    = 'cache_file';
+
+    /**
+     * HTTP methods that always match when no methods provided.
+     */
+    const HTTP_METHODS_EMPTY = [
+        RequestMethod::METHOD_GET,
+        RequestMethod::METHOD_HEAD,
+        RequestMethod::METHOD_OPTIONS,
+    ];
+
+    /**
+     * HTTP methods used to introspect a resource (test for existence, options)
+     */
+    const HTTP_METHODS_INTROSPECT = [
+        RequestMethod::METHOD_HEAD,
+        RequestMethod::METHOD_OPTIONS,
+    ];
+
+    /**
+     * Standard HTTP methods against which to test HEAD/OPTIONS requests.
+     */
+    const HTTP_METHODS_STANDARD = [
+        RequestMethod::METHOD_HEAD,
+        RequestMethod::METHOD_GET,
+        RequestMethod::METHOD_POST,
+        RequestMethod::METHOD_PUT,
+        RequestMethod::METHOD_PATCH,
+        RequestMethod::METHOD_DELETE,
+        RequestMethod::METHOD_OPTIONS,
+        RequestMethod::METHOD_TRACE,
+    ];
 
     /**
      * Regular expression pattern for identifying a variable subsititution.
@@ -197,11 +229,18 @@ REGEX;
         $dispatcher = $this->getDispatcher($dispatchData);
         $result     = $dispatcher->dispatch($method, $path);
 
-        if ($result[0] !== Dispatcher::FOUND) {
-            return $this->marshalFailedRoute($result);
+        if ($result[0] !== Dispatcher::FOUND
+            && in_array($method, self::HTTP_METHODS_INTROSPECT, true)
+        ) {
+            $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
+            if ($introspectionResult) {
+                return $this->marshalMatchedRoute($introspectionResult, $method);
+            }
         }
 
-        return $this->marshalMatchedRoute($result, $method);
+        return ($result[0] !== Dispatcher::FOUND)
+            ? $this->marshalFailedRoute($result)
+            : $this->marshalMatchedRoute($result, $method);
     }
 
     /**
@@ -401,19 +440,21 @@ REGEX;
         $methods = $route->getAllowedMethods();
 
         if ($methods === Route::HTTP_METHOD_ANY) {
-            $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE'];
+            $methods = self::HTTP_METHODS_STANDARD;
         }
 
-        if (in_array('HEAD', $methods, true) && $route->implicitHead()) {
-            unset($methods[array_search('HEAD', $methods)]);
+        // Remove HEAD from allowed methods if it was implicitly registered
+        if (in_array(RequestMethod::METHOD_HEAD, $methods, true) && $route->implicitHead()) {
+            unset($methods[array_search(RequestMethod::METHOD_HEAD, $methods)]);
         }
 
-        if (in_array('OPTIONS', $methods, true) && $route->implicitOptions()) {
-            unset($methods[array_search('OPTIONS', $methods)]);
+        // Remove OPTIONS from allowed methods if it was implicitly registered
+        if (in_array(RequestMethod::METHOD_OPTIONS, $methods, true) && $route->implicitOptions()) {
+            unset($methods[array_search(RequestMethod::METHOD_OPTIONS, $methods)]);
         }
 
         if (empty($methods)) {
-            $methods = ['GET', 'HEAD', 'OPTIONS'];
+            $methods = self::HTTP_METHODS_EMPTY;
         }
 
         $this->router->addRoute($methods, $route->getPath(), $route->getPath());
@@ -504,5 +545,32 @@ REGEX;
             $this->cacheFile,
             sprintf(self::CACHE_TEMPLATE, var_export($dispatchData, true))
         );
+    }
+
+    /**
+     * Dispatch the given path against the set of standard methods to see if a
+     * match exists.
+     *
+     * Call this method for failed HEAD or OPTIONS requests, to see if another
+     * method matches; if so, return the match.
+     *
+     * @param string $method
+     * @param string $path
+     * @param Dispatcher $dispatcher
+     * @return false|array False if no match found, array representing the match
+     *     otherwise.
+     */
+    private function probeIntrospectionMethod($method, $path, Dispatcher $dispatcher)
+    {
+        foreach (self::HTTP_METHODS_STANDARD as $testMethod) {
+            if ($method === $testMethod) {
+                continue;
+            }
+            $result = $dispatcher->dispatch($testMethod, $path);
+            if ($result[0] === Dispatcher::FOUND) {
+                return $result;
+            }
+        }
+        return false;
     }
 }

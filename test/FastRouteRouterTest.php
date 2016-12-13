@@ -94,16 +94,13 @@ class FastRouteRouterTest extends TestCase
     public function testIfRouteSpecifiesAnyHttpMethodFastRouteIsPassedHardCodedListOfMethods()
     {
         $route = new Route('/foo', 'foo');
-        $this->fastRouter->addRoute([
-            'GET',
-            'POST',
-            'PUT',
-            'PATCH',
-            'DELETE',
-            'HEAD',
-            'OPTIONS',
-            'TRACE'
-        ], '/foo', '/foo')->shouldBeCalled();
+        $this->fastRouter
+            ->addRoute(
+                FastRouteRouter::HTTP_METHODS_STANDARD,
+                '/foo',
+                '/foo'
+            )
+            ->shouldBeCalled();
 
         $router = $this->getRouter();
         $router->addRoute($route);
@@ -115,11 +112,13 @@ class FastRouteRouterTest extends TestCase
     public function testIfRouteSpecifiesNoHttpMethodsFastRouteIsPassedHardCodedListOfMethods()
     {
         $route = new Route('/foo', 'foo', []);
-        $this->fastRouter->addRoute([
-            'GET',
-            'HEAD',
-            'OPTIONS',
-        ], '/foo', '/foo')->shouldBeCalled();
+        $this->fastRouter
+            ->addRoute(
+                FastRouteRouter::HTTP_METHODS_EMPTY,
+                '/foo',
+                '/foo'
+            )
+            ->shouldBeCalled();
 
         $router = $this->getRouter();
         $router->addRoute($route);
@@ -168,6 +167,107 @@ class FastRouteRouterTest extends TestCase
         $route = $data['route'];
         $result = $data['result'];
         $this->assertSame($route, $result->getMatchedRoute());
+    }
+
+    public function idemPotentMethods()
+    {
+        return [
+            'get' => ['GET'],
+            'head' => ['HEAD'],
+        ];
+    }
+
+    /**
+     * @dataProvider idemPotentMethods
+     */
+    public function testRouteNotSpecifyingOptionsImpliesOptionsIsSupportedAndMatchesWhenGetOrHeadIsAllowed(
+        $method
+    ) {
+        $route = new Route('/foo', 'foo', ['POST', $method]);
+
+        $uri = $this->prophesize(UriInterface::class);
+        $uri->getPath()->willReturn('/foo');
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getUri()->willReturn($uri);
+        $request->getMethod()->willReturn('OPTIONS');
+
+        // This test needs to determine what the default dispatcher does with
+        // OPTIONS requests when the route does not support them. As a result,
+        // it does not mock the router or dispatcher.
+        $router = new FastRouteRouter();
+        $router->addRoute($route); // Must add, so we can determine middleware later
+        $result = $router->match($request->reveal());
+        $this->assertInstanceOf(RouteResult::class, $result);
+        $this->assertTrue($result->isSuccess());
+        $routeMatched = $result->getMatchedRoute();
+        $this->assertTrue($routeMatched->implicitOptions());
+    }
+
+    public function testRouteNotSpecifyingOptionsGetOrHeadMatchesOptions()
+    {
+        $route = new Route('/foo', 'foo', ['POST']);
+
+        $uri = $this->prophesize(UriInterface::class);
+        $uri->getPath()->willReturn('/foo');
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getUri()->willReturn($uri);
+        $request->getMethod()->willReturn('OPTIONS');
+
+        // This test needs to determine what the default dispatcher does with
+        // OPTIONS requests when the route does not support them. As a result,
+        // it does not mock the router or dispatcher.
+        $router = new FastRouteRouter();
+        $router->addRoute($route); // Must add, so we can determine middleware later
+        $result = $router->match($request->reveal());
+        $this->assertInstanceOf(RouteResult::class, $result);
+        $this->assertTrue($result->isSuccess());
+    }
+
+    public function testRouteNotSpecifyingGetOrHeadDoesMatcheshHead()
+    {
+        $route = new Route('/foo', 'foo', ['POST']);
+
+        $uri = $this->prophesize(UriInterface::class);
+        $uri->getPath()->willReturn('/foo');
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getUri()->willReturn($uri);
+        $request->getMethod()->willReturn('HEAD');
+
+        // This test needs to determine what the default dispatcher does with
+        // HEAD requests when the route does not support them. As a result,
+        // it does not mock the router or dispatcher.
+        $router = new FastRouteRouter();
+        $router->addRoute($route); // Must add, so we can determine middleware later
+        $result = $router->match($request->reveal());
+        $this->assertInstanceOf(RouteResult::class, $result);
+        $this->assertTrue($result->isSuccess());
+    }
+
+    /**
+     * With GET provided explicitly, FastRoute will match a HEAD request.
+     */
+    public function testRouteSpecifyingGetMatchesHead()
+    {
+        $route = new Route('/foo', 'foo', ['GET']);
+
+        $uri = $this->prophesize(UriInterface::class);
+        $uri->getPath()->willReturn('/foo');
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $request->getUri()->willReturn($uri);
+        $request->getMethod()->willReturn('HEAD');
+
+        // This test needs to determine what the default dispatcher does with
+        // HEAD requests when the route does not support them. As a result,
+        // it does not mock the router or dispatcher.
+        $router = new FastRouteRouter();
+        $router->addRoute($route); // Must add, so we can determine middleware later
+        $result = $router->match($request->reveal());
+        $this->assertInstanceOf(RouteResult::class, $result);
+        $this->assertTrue($result->isSuccess());
     }
 
     public function testMatchFailureDueToHttpMethodReturnsRouteResultWithAllowedMethods()
