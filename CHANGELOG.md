@@ -37,6 +37,26 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
+## 1.2.1 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#19](https://github.com/zendframework/zend-expressive-fastroute/pull/19) fixes
+  route generation for optional segments with regex char classes: e.g.
+  `[/{param:my-[a-z]+}]`
+
 ## 1.2.0 - 2016-06-16
 
 ### Added
