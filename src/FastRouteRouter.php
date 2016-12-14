@@ -48,9 +48,9 @@ EOT;
     ];
 
     /**
-     * HTTP methods used to introspect a resource (test for existence, options)
+     * HTTP methods implicitly supported by any route
      */
-    const HTTP_METHODS_INTROSPECT = [
+    const HTTP_METHODS_IMPLICIT = [
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
@@ -230,7 +230,7 @@ REGEX;
         $result     = $dispatcher->dispatch($method, $path);
 
         if ($result[0] !== Dispatcher::FOUND
-            && in_array($method, self::HTTP_METHODS_INTROSPECT, true)
+            && in_array($method, self::HTTP_METHODS_IMPLICIT, true)
         ) {
             $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
             if ($introspectionResult) {
