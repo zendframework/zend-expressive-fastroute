@@ -1,14 +1,13 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @see       https://github.com/zendframework/zend-expressive for the canonical source repository
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-expressive/blob/master/LICENSE.md New BSD License
+ * @see       https://github.com/zendframework/zend-expressive-fastroute for the canonical source repository
+ * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-expressive-fastroute/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Expressive\Router;
 
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
@@ -22,6 +21,55 @@ use Zend\Expressive\Router\Exception;
 class FastRouteRouter implements RouterInterface
 {
     /**
+     * Template used when generating the cache file.
+     */
+    const CACHE_TEMPLATE = <<< 'EOT'
+<?php
+return %s;
+EOT;
+
+    /**
+     * @const string Configuration key used to enable/disable fastroute caching
+     */
+    const CONFIG_CACHE_ENABLED = 'cache_enabled';
+
+    /**
+     * @const string Configuration key used to set the cache file path
+     */
+    const CONFIG_CACHE_FILE    = 'cache_file';
+
+    /**
+     * HTTP methods that always match when no methods provided.
+     */
+    const HTTP_METHODS_EMPTY = [
+        RequestMethod::METHOD_GET,
+        RequestMethod::METHOD_HEAD,
+        RequestMethod::METHOD_OPTIONS,
+    ];
+
+    /**
+     * HTTP methods implicitly supported by any route
+     */
+    const HTTP_METHODS_IMPLICIT = [
+        RequestMethod::METHOD_HEAD,
+        RequestMethod::METHOD_OPTIONS,
+    ];
+
+    /**
+     * Standard HTTP methods against which to test HEAD/OPTIONS requests.
+     */
+    const HTTP_METHODS_STANDARD = [
+        RequestMethod::METHOD_HEAD,
+        RequestMethod::METHOD_GET,
+        RequestMethod::METHOD_POST,
+        RequestMethod::METHOD_PUT,
+        RequestMethod::METHOD_PATCH,
+        RequestMethod::METHOD_DELETE,
+        RequestMethod::METHOD_OPTIONS,
+        RequestMethod::METHOD_TRACE,
+    ];
+
+    /**
      * Regular expression pattern for identifying a variable subsititution.
      *
      * This is an sprintf pattern; the variable name will be substituted for
@@ -29,7 +77,7 @@ class FastRouteRouter implements RouterInterface
      *
      * @see \FastRoute\RouteParser\Std for mirror, generic representation.
      */
-    const VARIABLE_REGEX = <<<'REGEX'
+    const VARIABLE_REGEX = <<< 'REGEX'
 \{
     \s* %s \s*
     (?:
@@ -39,9 +87,38 @@ class FastRouteRouter implements RouterInterface
 REGEX;
 
     /**
+     * Cache generated route data?
+     *
+     * @var bool
+     */
+    private $cacheEnabled = false;
+
+    /**
+     * Cache file path relative to the project directory.
+     *
+     * @var string
+     */
+    private $cacheFile = 'data/cache/fastroute.php.cache';
+
+    /**
      * @var callable A factory callback that can return a dispatcher.
      */
     private $dispatcherCallback;
+
+    /**
+     * Cached data used by the dispatcher.
+     *
+     * @var array
+     */
+    private $dispatchData = [];
+
+    /**
+     * True if cache is enabled and valid dispatch data has been loaded from
+     * cache.
+     *
+     * @var bool
+     */
+    private $hasCache = false;
 
     /**
      * FastRoute router
@@ -80,15 +157,46 @@ REGEX;
      *     implementation will be used.
      * @param null|callable $dispatcherFactory Callable that will return a
      *     FastRoute dispatcher.
+     * @param array $config Array of custom configuration options.
      */
-    public function __construct(RouteCollector $router = null, callable $dispatcherFactory = null)
-    {
+    public function __construct(
+        RouteCollector $router = null,
+        callable $dispatcherFactory = null,
+        array $config = null
+    ) {
         if (null === $router) {
             $router = $this->createRouter();
         }
 
         $this->router = $router;
         $this->dispatcherCallback = $dispatcherFactory;
+
+        $this->loadConfig($config);
+    }
+
+    /**
+     * Load configuration parameters
+     *
+     * @param array $config Array of custom configuration options.
+     * @return void
+     */
+    private function loadConfig(array $config = null)
+    {
+        if (null === $config) {
+            return;
+        }
+
+        if (isset($config[self::CONFIG_CACHE_ENABLED])) {
+            $this->cacheEnabled = (bool) $config[self::CONFIG_CACHE_ENABLED];
+        }
+
+        if (isset($config[self::CONFIG_CACHE_FILE])) {
+            $this->cacheFile = (string) $config[self::CONFIG_CACHE_FILE];
+        }
+
+        if ($this->cacheEnabled) {
+            $this->loadDispatchData();
+        }
     }
 
     /**
@@ -114,16 +222,25 @@ REGEX;
         // Inject any pending routes
         $this->injectRoutes();
 
+        $dispatchData = $this->getDispatchData();
+
         $path       = $request->getUri()->getPath();
         $method     = $request->getMethod();
-        $dispatcher = $this->getDispatcher($this->router->getData());
+        $dispatcher = $this->getDispatcher($dispatchData);
         $result     = $dispatcher->dispatch($method, $path);
 
-        if ($result[0] != Dispatcher::FOUND) {
-            return $this->marshalFailedRoute($result);
+        if ($result[0] !== Dispatcher::FOUND
+            && in_array($method, self::HTTP_METHODS_IMPLICIT, true)
+        ) {
+            $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
+            if ($introspectionResult) {
+                return $this->marshalMatchedRoute($introspectionResult, $method);
+            }
         }
 
-        return $this->marshalMatchedRoute($result, $method);
+        return ($result[0] !== Dispatcher::FOUND)
+            ? $this->marshalFailedRoute($result)
+            : $this->marshalMatchedRoute($result, $method);
     }
 
     /**
@@ -289,11 +406,7 @@ REGEX;
             $params = array_merge($options['defaults'], $params);
         }
 
-        return RouteResult::fromRouteMatch(
-            $route->getName(),
-            $route->getMiddleware(),
-            $params
-        );
+        return RouteResult::fromRoute($route, $params);
     }
 
     /**
@@ -316,17 +429,138 @@ REGEX;
      */
     private function injectRoute(Route $route)
     {
+        // Filling the routes' hash-map is required by the `generateUri` method
+        $this->routes[$route->getName()] = $route;
+
+        // Skip feeding FastRoute collector if valid cached data was already loaded
+        if ($this->hasCache) {
+            return;
+        }
+
         $methods = $route->getAllowedMethods();
 
         if ($methods === Route::HTTP_METHOD_ANY) {
-            $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE'];
+            $methods = self::HTTP_METHODS_STANDARD;
         }
 
         if (empty($methods)) {
-            $methods = ['GET', 'HEAD', 'OPTIONS'];
+            $methods = self::HTTP_METHODS_EMPTY;
         }
 
         $this->router->addRoute($methods, $route->getPath(), $route->getPath());
-        $this->routes[$route->getName()] = $route;
+    }
+
+    /**
+     * Get the dispatch data either from cache or freshly generated by the
+     * FastRoute data generator.
+     *
+     * If caching is enabled, store the freshly generated data to file.
+     *
+     * @return array
+     */
+    private function getDispatchData()
+    {
+        if ($this->hasCache) {
+            return $this->dispatchData;
+        }
+
+        $dispatchData = $this->router->getData();
+
+        if ($this->cacheEnabled) {
+            $this->cacheDispatchData($dispatchData);
+        }
+
+        return $dispatchData;
+    }
+
+    /**
+     * Load dispatch data from cache
+     *
+     * @return void
+     * @throws Exception\InvalidCacheException If the cache file contains
+     *     invalid data
+     */
+    private function loadDispatchData()
+    {
+        set_error_handler(function () {
+        }, E_WARNING); // suppress php warnings
+        $dispatchData = include $this->cacheFile;
+        restore_error_handler();
+
+        // Cache file does not exist; return empty array for dispatch data
+        if (false === $dispatchData) {
+            return [];
+        }
+
+        if (! is_array($dispatchData)) {
+            throw new Exception\InvalidCacheException(sprintf(
+                'Invalid cache file "%s"; cache file MUST return an array',
+                $this->cacheFile
+            ));
+        }
+
+        $this->hasCache = true;
+        $this->dispatchData = $dispatchData;
+    }
+
+    /**
+     * Save dispatch data to cache
+     *
+     * @param array $dispatchData
+     * @return int|false bytes written to file or false if error
+     * @throws Exception\InvalidCacheDirectoryException If the cache directory
+     *     does not exist.
+     * @throws Exception\InvalidCacheDirectoryException If the cache directory
+     *     is not writable.
+     */
+    private function cacheDispatchData(array $dispatchData)
+    {
+        $cacheDir = dirname($this->cacheFile);
+
+        if (! is_dir($cacheDir)) {
+            throw new Exception\InvalidCacheDirectoryException(sprintf(
+                'The cache directory "%s" does not exist',
+                $cacheDir
+            ));
+        }
+
+        if (! is_writable($cacheDir)) {
+            throw new Exception\InvalidCacheDirectoryException(sprintf(
+                'The cache directory "%s" is not writable',
+                $cacheDir
+            ));
+        }
+
+        return file_put_contents(
+            $this->cacheFile,
+            sprintf(self::CACHE_TEMPLATE, var_export($dispatchData, true))
+        );
+    }
+
+    /**
+     * Dispatch the given path against the set of standard methods to see if a
+     * match exists.
+     *
+     * Call this method for failed HEAD or OPTIONS requests, to see if another
+     * method matches; if so, return the match.
+     *
+     * @param string $method
+     * @param string $path
+     * @param Dispatcher $dispatcher
+     * @return false|array False if no match found, array representing the match
+     *     otherwise.
+     */
+    private function probeIntrospectionMethod($method, $path, Dispatcher $dispatcher)
+    {
+        foreach (self::HTTP_METHODS_STANDARD as $testMethod) {
+            if ($method === $testMethod) {
+                continue;
+            }
+            $result = $dispatcher->dispatch($testMethod, $path);
+            if ($result[0] === Dispatcher::FOUND) {
+                return $result;
+            }
+        }
+        return false;
     }
 }

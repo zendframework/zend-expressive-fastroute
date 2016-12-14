@@ -10,11 +10,11 @@ cache:
 matrix:
   fast_finish: true
   include:
-    - php: 5.5
     - php: 5.6
       env:
         - CS_CHECK=true
     - php: 7
+    - php: 7.1
     - php: hhvm 
   allow_failures:
     - php: hhvm
@@ -29,6 +29,8 @@ install:
 script:
   - composer test
   - if [[ $CS_CHECK == 'true' ]]; then composer cs ; fi
+  - if [[ $CS_CHECK == 'true' ]]; then composer license-check ; fi
 
 notifications:
-  email: true
+  irc: "irc.freenode.org#zftalk.dev"
+  email: false

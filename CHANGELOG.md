@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.3.0 - TBD
+
+### Added
+
+- [#16](https://github.com/zendframework/zend-expressive-fastroute/pull/16) adds
+  support for FastRoute's caching features. Enable these with the following
+  configuration:
+
+  ```php
+  [
+      'router' => [
+          'fastroute' => [
+              'cache_enabled' => true,                   // boolean
+              'cache_file'    => 'data/cache/fastroute', // specify any location
+          ],
+      ],
+  ]
+  ```
+
+  Once enabled, the first request will build the cache and store it, while
+  subsequent requests will read directly from the cache instead of any routes
+  injected in the router.
+
+- [#23](https://github.com/zendframework/zend-expressive-fastroute/pull/23)
+  adds support for PHP 7.1.
+
+### Changed
+
+- [#24](https://github.com/zendframework/zend-expressive-fastroute/pull/24)
+  updates the router to populate a successful `RouteResult` with the associated
+  `Zend\Expressive\Route` instance. This allows developers to retrieve
+  additional metadata, such as the path, allowed methods, or options.
+
+- [#24](https://github.com/zendframework/zend-expressive-fastroute/pull/24)
+  updates the router to always honor `HEAD` and `OPTIONS` requests if the path
+  matches, returning a success route result. Dispatchers will need to check the
+  associated `Route` instance to determine if the route explicitly supported the
+  method, or if the match was implicit (via `Route::implicitHead()` or
+  `Route::implicitOptions()`).
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#23](https://github.com/zendframework/zend-expressive-fastroute/pull/23)
+  removes support for PHP 5.5.
+
+### Fixed
+
+- Nothing.
+
 ## 1.2.1 - 2016-12-13
 
 ### Added
