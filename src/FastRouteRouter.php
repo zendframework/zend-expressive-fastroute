@@ -443,16 +443,6 @@ REGEX;
             $methods = self::HTTP_METHODS_STANDARD;
         }
 
-        // Remove HEAD from allowed methods if it was implicitly registered
-        if (in_array(RequestMethod::METHOD_HEAD, $methods, true) && $route->implicitHead()) {
-            unset($methods[array_search(RequestMethod::METHOD_HEAD, $methods)]);
-        }
-
-        // Remove OPTIONS from allowed methods if it was implicitly registered
-        if (in_array(RequestMethod::METHOD_OPTIONS, $methods, true) && $route->implicitOptions()) {
-            unset($methods[array_search(RequestMethod::METHOD_OPTIONS, $methods)]);
-        }
-
         if (empty($methods)) {
             $methods = self::HTTP_METHODS_EMPTY;
         }
