@@ -28,6 +28,20 @@ All notable changes to this project will be documented in this file, in reverse 
 - [#23](https://github.com/zendframework/zend-expressive-fastroute/pull/23)
   adds support for PHP 7.1.
 
+### Changed
+
+- [#24](https://github.com/zendframework/zend-expressive-fastroute/pull/24)
+  updates the router to populate a successful `RouteResult` with the associated
+  `Zend\Expressive\Route` instance. This allows developers to retrieve
+  additional metadata, such as the path, allowed methods, or options.
+
+- [#24](https://github.com/zendframework/zend-expressive-fastroute/pull/24)
+  updates the router to always honor `HEAD` and `OPTIONS` requests if the path
+  matches, returning a success route result. Dispatchers will need to check the
+  associated `Route` instance to determine if the route explicitly supported the
+  method, or if the match was implicit (via `Route::implicitHead()` or
+  `Route::implicitOptions()`).
+
 ### Deprecated
 
 - Nothing.
