@@ -376,6 +376,26 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals($expected, $uri);
     }
 
+    public function testOptionsPassedToGenerateUriOverrideThoseFromRoute()
+    {
+        $route  = new Route('/page[/{page:\d+}/{locale:[a-z]{2}}[/optional-{extra:\w+}]]', 'foo', ['GET'], 'limit');
+        $route->setOptions(['defaults' => [
+            'page'   => 1,
+            'locale' => 'en',
+            'extra'  => 'tag',
+        ]]);
+
+        $router = new FastRouteRouter();
+        $router->addRoute($route);
+
+        $uri = $router->generateUri('limit', [], ['defaults' => [
+            'page'   => 5,
+            'locale' => 'de',
+            'extra'  => 'sort',
+        ]]);
+        $this->assertEquals('/page/5/de/optional-sort', $uri);
+    }
+
     public function testReturnedRouteResultShouldContainRouteName()
     {
         $route = new Route('/foo', 'foo', ['GET'], 'foo-route');
