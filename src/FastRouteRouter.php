@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-fastroute for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-fastroute/blob/master/LICENSE.md New BSD License
  */
 
@@ -14,6 +14,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\Exception;
+use Zend\Stdlib\ArrayUtils;
 
 /**
  * Router implementation bridging nikic/fast-route.
@@ -256,11 +257,14 @@ REGEX;
      * @param string $name Route name.
      * @param array $substitutions Key/value pairs to substitute into the route
      *     pattern.
+     * @param array $options Key/value option pairs to pass to the router for
+     *     purposes of generating a URI; takes precedence over options present
+     *     in route used to generate URI.
      * @return string URI path generated.
      * @throws Exception\InvalidArgumentException if the route name is not
      *     known.
      */
-    public function generateUri($name, array $substitutions = [])
+    public function generateUri($name, array $substitutions = [], array $options = [])
     {
         // Inject any pending routes
         $this->injectRoutes();
@@ -274,7 +278,7 @@ REGEX;
 
         $route   = $this->routes[$name];
         $path    = $route->getPath();
-        $options = $route->getOptions();
+        $options = ArrayUtils::merge($route->getOptions(), $options);
 
         if (! empty($options['defaults'])) {
             $substitutions = array_merge($options['defaults'], $substitutions);

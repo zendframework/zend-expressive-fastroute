@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.0.0 - TBD
+
+### Added
+
+- [#25](https://github.com/zendframework/zend-expressive-fastroute/pull/25)
+  adds support for zend-expressive-router 2.0. This includes a breaking change
+  to those _extending_ `Zend\Expressive\Router\ZendRouter`, as the
+  `generateUri()` method now expects a third, optional argument,
+  `array $options = []`.
+
+  For consumers, this represents new functionality; you may now pass router
+  options, such as defaults, via the new argument when generating a URI.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.3.1 - TBD
 
 ### Added
