@@ -362,6 +362,7 @@ REGEX;
      * If the failure was due to the HTTP method, passes the allowed HTTP
      * methods to the factory.
      *
+     * @param array $result
      * @return RouteResult
      */
     private function marshalFailedRoute(array $result)
