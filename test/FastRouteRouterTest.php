@@ -10,6 +10,7 @@ namespace ZendTest\Expressive\Router;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use PHPUnit_Framework_TestCase as TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
@@ -19,6 +20,21 @@ use Zend\Expressive\Router\RouteResult;
 
 class FastRouteRouterTest extends TestCase
 {
+    /**
+     * @var RouteCollector|ProphecyInterface
+     */
+    private $fastRouter;
+
+    /**
+     * @var Dispatcher|ProphecyInterface
+     */
+    private $dispatcher;
+
+    /**
+     * @var callable
+     */
+    private $dispatchCallback;
+
     public function setUp()
     {
         $this->fastRouter = $this->prophesize(RouteCollector::class);
