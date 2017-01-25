@@ -177,6 +177,8 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @depends testMatchingRouteShouldReturnSuccessfulRouteResult
+     *
+     * @param array $data
      */
     public function testMatchedRouteResultContainsRoute(array $data)
     {
@@ -195,6 +197,8 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider idemPotentMethods
+     *
+     * @param string $method
      */
     public function testRouteNotSpecifyingOptionsImpliesOptionsIsSupportedAndMatchesWhenGetOrHeadIsAllowed(
         $method
@@ -380,6 +384,10 @@ class FastRouteRouterTest extends TestCase
      * @group zendframework/zend-expressive#53
      * @group 8
      * @dataProvider generatedUriProvider
+     *
+     * @param array $routes
+     * @param string $expected
+     * @param array $generateArgs
      */
     public function testCanGenerateUriFromRoutes(array $routes, $expected, array $generateArgs)
     {
@@ -473,8 +481,11 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider uriGeneratorDataProvider
+     *
+     * @param string $expectedUri
+     * @param array $params
      */
-    public function testUriGenerationSubstitutionsWithDefaultOptions($expectedUri, $params)
+    public function testUriGenerationSubstitutionsWithDefaultOptions($expectedUri, array $params)
     {
         $router = new FastRouteRouter();
 
@@ -493,8 +504,11 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider uriGeneratorDataProvider
+     *
+     * @param string $expectedUri
+     * @param array $params
      */
-    public function testUriGenerationSubstitutionsWithDefaultsAndOptionalParameters($expectedUri, $params)
+    public function testUriGenerationSubstitutionsWithDefaultsAndOptionalParameters($expectedUri, array $params)
     {
         $router = new FastRouteRouter();
 
@@ -533,8 +547,11 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider uriGeneratorWithPartialDefaultsDataProvider
+     *
+     * @param string $expectedUri
+     * @param array $params
      */
-    public function testUriGenerationSubstitutionsWithPartialDefaultsAndOptionalParameters($expectedUri, $params)
+    public function testUriGenerationSubstitutionsWithPartialDefaultsAndOptionalParameters($expectedUri, array $params)
     {
         $router = new FastRouteRouter();
 
