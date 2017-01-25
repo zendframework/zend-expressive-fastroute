@@ -490,9 +490,9 @@ REGEX;
         $dispatchData = include $this->cacheFile;
         restore_error_handler();
 
-        // Cache file does not exist; return empty array for dispatch data
+        // Cache file does not exist
         if (false === $dispatchData) {
-            return [];
+            return;
         }
 
         if (! is_array($dispatchData)) {
