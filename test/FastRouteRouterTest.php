@@ -39,7 +39,7 @@ class FastRouteRouterTest extends TestCase
     {
         $this->fastRouter = $this->prophesize(RouteCollector::class);
         $this->dispatcher = $this->prophesize(Dispatcher::class);
-        $this->dispatchCallback = function ($data) {
+        $this->dispatchCallback = function () {
             return $this->dispatcher->reveal();
         };
     }
