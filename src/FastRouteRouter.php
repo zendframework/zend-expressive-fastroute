@@ -362,6 +362,7 @@ REGEX;
      * If the failure was due to the HTTP method, passes the allowed HTTP
      * methods to the factory.
      *
+     * @param array $result
      * @return RouteResult
      */
     private function marshalFailedRoute(array $result)
@@ -415,8 +416,6 @@ REGEX;
 
     /**
      * Inject queued Route instances into the underlying router.
-     *
-     * @param Route $route
      */
     private function injectRoutes()
     {
@@ -491,9 +490,9 @@ REGEX;
         $dispatchData = include $this->cacheFile;
         restore_error_handler();
 
-        // Cache file does not exist; return empty array for dispatch data
+        // Cache file does not exist
         if (false === $dispatchData) {
-            return [];
+            return;
         }
 
         if (! is_array($dispatchData)) {

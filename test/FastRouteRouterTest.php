@@ -9,7 +9,8 @@ namespace ZendTest\Expressive\Router;
 
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
@@ -19,11 +20,26 @@ use Zend\Expressive\Router\RouteResult;
 
 class FastRouteRouterTest extends TestCase
 {
+    /**
+     * @var RouteCollector|ProphecyInterface
+     */
+    private $fastRouter;
+
+    /**
+     * @var Dispatcher|ProphecyInterface
+     */
+    private $dispatcher;
+
+    /**
+     * @var callable
+     */
+    private $dispatchCallback;
+
     public function setUp()
     {
         $this->fastRouter = $this->prophesize(RouteCollector::class);
         $this->dispatcher = $this->prophesize(Dispatcher::class);
-        $this->dispatchCallback = function ($data) {
+        $this->dispatchCallback = function () {
             return $this->dispatcher->reveal();
         };
     }
@@ -161,6 +177,8 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @depends testMatchingRouteShouldReturnSuccessfulRouteResult
+     *
+     * @param array $data
      */
     public function testMatchedRouteResultContainsRoute(array $data)
     {
@@ -179,6 +197,8 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider idemPotentMethods
+     *
+     * @param string $method
      */
     public function testRouteNotSpecifyingOptionsImpliesOptionsIsSupportedAndMatchesWhenGetOrHeadIsAllowed(
         $method
@@ -364,6 +384,10 @@ class FastRouteRouterTest extends TestCase
      * @group zendframework/zend-expressive#53
      * @group 8
      * @dataProvider generatedUriProvider
+     *
+     * @param array $routes
+     * @param string $expected
+     * @param array $generateArgs
      */
     public function testCanGenerateUriFromRoutes(array $routes, $expected, array $generateArgs)
     {
@@ -430,7 +454,9 @@ class FastRouteRouterTest extends TestCase
         $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
         $router->addRoute($route);
 
-        $this->setExpectedException(InvalidArgumentException::class, 'unsubstituted parameters');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('unsubstituted parameters');
+
         $router->generateUri('foo', ['extra' => 'segment']);
     }
 
@@ -455,8 +481,11 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider uriGeneratorDataProvider
+     *
+     * @param string $expectedUri
+     * @param array $params
      */
-    public function testUriGenerationSubstitutionsWithDefaultOptions($expectedUri, $params)
+    public function testUriGenerationSubstitutionsWithDefaultOptions($expectedUri, array $params)
     {
         $router = new FastRouteRouter();
 
@@ -475,8 +504,11 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider uriGeneratorDataProvider
+     *
+     * @param string $expectedUri
+     * @param array $params
      */
-    public function testUriGenerationSubstitutionsWithDefaultsAndOptionalParameters($expectedUri, $params)
+    public function testUriGenerationSubstitutionsWithDefaultsAndOptionalParameters($expectedUri, array $params)
     {
         $router = new FastRouteRouter();
 
@@ -515,8 +547,11 @@ class FastRouteRouterTest extends TestCase
 
     /**
      * @dataProvider uriGeneratorWithPartialDefaultsDataProvider
+     *
+     * @param string $expectedUri
+     * @param array $params
      */
-    public function testUriGenerationSubstitutionsWithPartialDefaultsAndOptionalParameters($expectedUri, $params)
+    public function testUriGenerationSubstitutionsWithPartialDefaultsAndOptionalParameters($expectedUri, array $params)
     {
         $router = new FastRouteRouter();
 
