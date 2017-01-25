@@ -416,8 +416,6 @@ REGEX;
 
     /**
      * Inject queued Route instances into the underlying router.
-     *
-     * @param Route $route
      */
     private function injectRoutes()
     {
