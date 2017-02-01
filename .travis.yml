@@ -23,6 +23,7 @@ matrix:
         - DEPS=locked
         - TEST_COVERAGE=true
     - php: 5.6
+      env:
         - DEPS=latest
     - php: 7
       env:
@@ -33,7 +34,7 @@ matrix:
         - CS_CHECK=true
     - php: 7
       env:
-        - DEPS=lates
+        - DEPS=latest
     - php: 7.1
       env:
         - DEPS=lowest
