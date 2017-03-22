@@ -631,4 +631,19 @@ class FastRouteRouterTest extends TestCase
 
         unlink($cache_file);
     }
+
+    /**
+     * Test for issue #30
+     */
+    public function testGenerateUriRaisesExceptionForMissingMandatoryParameters()
+    {
+        $router = new FastRouteRouter();
+        $route = new Route('/foo/{id}', 'foo', ['GET'], 'foo');
+        $router->addRoute($route);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Not enough parameters given');
+
+        $router->generateUri('foo');
+    }
 }

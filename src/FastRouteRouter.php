@@ -15,6 +15,7 @@ use FastRoute\RouteParser\Std as RouteParser;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\Exception;
 use Zend\Stdlib\ArrayUtils;
+use LogicException;
 
 /**
  * Router implementation bridging nikic/fast-route.
@@ -69,23 +70,6 @@ EOT;
         RequestMethod::METHOD_OPTIONS,
         RequestMethod::METHOD_TRACE,
     ];
-
-    /**
-     * Regular expression pattern for identifying a variable subsititution.
-     *
-     * This is an sprintf pattern; the variable name will be substituted for
-     * the final pattern.
-     *
-     * @see \FastRoute\RouteParser\Std for mirror, generic representation.
-     */
-    const VARIABLE_REGEX = <<< 'REGEX'
-\{
-    \s* %s \s*
-    (?:
-        : \s* ([^{}]*(?:\{(?-1)\}[^{}]*)*)
-    )?
-\}
-REGEX;
 
     /**
      * Cache generated route data?
@@ -277,41 +261,50 @@ REGEX;
         }
 
         $route   = $this->routes[$name];
-        $path    = $route->getPath();
         $options = ArrayUtils::merge($route->getOptions(), $options);
 
         if (! empty($options['defaults'])) {
             $substitutions = array_merge($options['defaults'], $substitutions);
         }
 
-        foreach ($substitutions as $key => $value) {
-            $pattern = sprintf(
-                '~%s~x',
-                sprintf(self::VARIABLE_REGEX, preg_quote($key))
-            );
-            $path = preg_replace($pattern, $value, $path);
-        }
+        $routeParser = new RouteParser();
+        $routes = $routeParser->parse($route->getPath());
 
-        // 1. remove optional segments' ending delimiters
-        //    and remove leftover regex char classes like `:[` and `:prefix-[` (issue #18)
-        // 2. split path into an array of optional segments and remove those
-        //    containing unsubstituted parameters starting from the last segment
-        $path = preg_replace('/\]|:.*\[/', '', $path);
-        $segs = array_reverse(explode('[', $path));
-        foreach ($segs as $n => $seg) {
-            if (strpos($seg, '{') !== false) {
-                if (isset($segs[$n - 1])) {
+        // One route pattern can correspond to multiple routes if it has optional parts
+        foreach ($routes as $r) {
+            $path = '';
+            $paramIdx = 0;
+            foreach ($r as $part) {
+                // Fixed segment in the route
+                if (is_string($part)) {
+                    $path .= $part;
+                    continue;
+                }
+
+                // Placeholder in the route
+                if ($paramIdx === count($substitutions)) {
+                    throw new LogicException('Not enough parameters given');
+                }
+
+                if (! isset($substitutions[$part[0]])) {
                     throw new Exception\InvalidArgumentException(
                         'Optional segments with unsubstituted parameters cannot '
                         . 'contain segments with substituted parameters when using FastRoute'
                     );
                 }
-                unset($segs[$n]);
+
+                $path .= $substitutions[$part[0]];
+                $paramIdx++;
+            }
+
+            // If number of params in route matches with number of params given, use that route.
+            // Otherwise try to find a route that has more params
+            if ($paramIdx === count($substitutions)) {
+                return $path;
             }
         }
-        $path = implode('', array_reverse($segs));
 
-        return $path;
+        throw new LogicException('Too many parameters given');
     }
 
     /**
