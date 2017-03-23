@@ -287,7 +287,7 @@ EOT;
 
                 // Check substitute value with regex
                 $regex = '~^' . str_replace('/', '\/', $part[1]) . '$~';
-                if (!preg_match($regex, $substitutions[$part[0]])) {
+                if (! preg_match($regex, $substitutions[$part[0]])) {
                     throw new Exception\InvalidArgumentException(sprintf(
                         'Parameter value for [%s] did not match the regex `%s`',
                         $part[0],
