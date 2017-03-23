@@ -228,22 +228,19 @@ EOT;
      * Generate a URI based on a given route.
      *
      * Replacements in FastRoute are written as `{name}` or `{name:<pattern>}`;
-     * this method uses a regular expression to search for substitutions that
-     * match, and replaces them with the value provided.
-     *
-     * It does *not* use the pattern to validate that the substitution value is
-     * valid beforehand, however.
+     * this method uses `FastRoute\RouteParser\Std` to search for the best route match
+     * based on the available substitutions and generates a uri.
      *
      * @param string $name          Route name.
      * @param array  $substitutions Key/value pairs to substitute into the route
      *                              pattern.
      * @param array  $options       Key/value option pairs to pass to the router for
-     *                              purposes of generating a URI; takes precedence over options present
-     *                              in route used to generate URI.
+     *                              purposes of generating a URI; takes precedence over
+     *                              options present in route used to generate URI.
      *
      * @return string URI path generated.
-     * @throws Exception\InvalidArgumentException if the route name is not
-     *     known.
+     * @throws Exception\InvalidArgumentException if the route name is not known or
+     *                              or a parameter value does not match its regex.
      */
     public function generateUri($name, array $substitutions = [], array $options = [])
     {
@@ -278,9 +275,11 @@ EOT;
                 continue;
             }
 
+            // Generate the path
             $path = '';
             foreach ($parts as $part) {
                 if (is_string($part)) {
+                    // Append the string
                     $path .= $part;
                     continue;
                 }
@@ -295,12 +294,15 @@ EOT;
                     ));
                 }
 
+                // Append the substituted value
                 $path .= $substitutions[$part[0]];
             }
 
+            // Return generated path
             return $path;
         }
 
+        // No valid route was found; explain which minimal required parameters are needed
         throw new Exception\InvalidArgumentException(sprintf(
             'Expected parameter values for at least [%s], but received [%s]',
             implode(',', $requiredParameters),
