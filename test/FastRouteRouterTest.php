@@ -448,18 +448,6 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('foo-route', $result->getMatchedRouteName());
     }
 
-    public function testGenerateUriRaisesExceptionForIncompleteUriSubstitutions()
-    {
-        $router = new FastRouteRouter();
-        $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
-        $router->addRoute($route);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('unsubstituted parameters');
-
-        $router->generateUri('foo', ['extra' => 'segment']);
-    }
-
     public function uriGeneratorDataProvider()
     {
         return [
@@ -641,8 +629,8 @@ class FastRouteRouterTest extends TestCase
         $route = new Route('/foo/{id}', 'foo', ['GET'], 'foo');
         $router->addRoute($route);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Not enough parameters given');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expected parameter values for at least [id], but received []');
 
         $router->generateUri('foo');
     }

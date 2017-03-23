@@ -7,15 +7,14 @@
 
 namespace Zend\Expressive\Router;
 
-use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\Exception;
 use Zend\Stdlib\ArrayUtils;
-use LogicException;
 
 /**
  * Router implementation bridging nikic/fast-route.
@@ -29,17 +28,14 @@ class FastRouteRouter implements RouterInterface
 <?php
 return %s;
 EOT;
-
     /**
      * @const string Configuration key used to enable/disable fastroute caching
      */
     const CONFIG_CACHE_ENABLED = 'cache_enabled';
-
     /**
      * @const string Configuration key used to set the cache file path
      */
-    const CONFIG_CACHE_FILE    = 'cache_file';
-
+    const CONFIG_CACHE_FILE = 'cache_file';
     /**
      * HTTP methods that always match when no methods provided.
      */
@@ -48,7 +44,6 @@ EOT;
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
-
     /**
      * HTTP methods implicitly supported by any route
      */
@@ -56,7 +51,6 @@ EOT;
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
-
     /**
      * Standard HTTP methods against which to test HEAD/OPTIONS requests.
      */
@@ -138,11 +132,11 @@ EOT;
      *   RouteGenerator.
      * - A callable that returns a GroupCountBased dispatcher will be created.
      *
-     * @param null|RouteCollector $router If not provided, a default
-     *     implementation will be used.
-     * @param null|callable $dispatcherFactory Callable that will return a
-     *     FastRoute dispatcher.
-     * @param array $config Array of custom configuration options.
+     * @param null|RouteCollector $router            If not provided, a default
+     *                                               implementation will be used.
+     * @param null|callable       $dispatcherFactory Callable that will return a
+     *                                               FastRoute dispatcher.
+     * @param array               $config            Array of custom configuration options.
      */
     public function __construct(
         RouteCollector $router = null,
@@ -153,7 +147,7 @@ EOT;
             $router = $this->createRouter();
         }
 
-        $this->router = $router;
+        $this->router             = $router;
         $this->dispatcherCallback = $dispatcherFactory;
 
         $this->loadConfig($config);
@@ -163,6 +157,7 @@ EOT;
      * Load configuration parameters
      *
      * @param array $config Array of custom configuration options.
+     *
      * @return void
      */
     private function loadConfig(array $config = null)
@@ -200,6 +195,7 @@ EOT;
 
     /**
      * @param  Request $request
+     *
      * @return RouteResult
      */
     public function match(Request $request)
@@ -238,12 +234,13 @@ EOT;
      * It does *not* use the pattern to validate that the substitution value is
      * valid beforehand, however.
      *
-     * @param string $name Route name.
-     * @param array $substitutions Key/value pairs to substitute into the route
-     *     pattern.
-     * @param array $options Key/value option pairs to pass to the router for
-     *     purposes of generating a URI; takes precedence over options present
-     *     in route used to generate URI.
+     * @param string $name          Route name.
+     * @param array  $substitutions Key/value pairs to substitute into the route
+     *                              pattern.
+     * @param array  $options       Key/value option pairs to pass to the router for
+     *                              purposes of generating a URI; takes precedence over options present
+     *                              in route used to generate URI.
+     *
      * @return string URI path generated.
      * @throws Exception\InvalidArgumentException if the route name is not
      *     known.
@@ -267,44 +264,69 @@ EOT;
             $substitutions = array_merge($options['defaults'], $substitutions);
         }
 
-        $routeParser = new RouteParser();
-        $routes = $routeParser->parse($route->getPath());
+        $routeParser        = new RouteParser();
+        $routes             = array_reverse($routeParser->parse($route->getPath()));
+        $requiredParameters = [];
 
         // One route pattern can correspond to multiple routes if it has optional parts
-        foreach ($routes as $r) {
+        foreach ($routes as $parts) {
+            // Check if all parameters can be substituted
+            $requiredParameters = $this->hasRequiredParameters($parts, $substitutions);
+
+            // If not all parameters can be substituted, try the next route
+            if ($requiredParameters !== true) {
+                continue;
+            }
+
             $path = '';
-            $paramIdx = 0;
-            foreach ($r as $part) {
-                // Fixed segment in the route
+            foreach ($parts as $part) {
                 if (is_string($part)) {
                     $path .= $part;
                     continue;
                 }
 
-                // Placeholder in the route
-                if ($paramIdx === count($substitutions)) {
-                    throw new LogicException('Not enough parameters given');
-                }
-
-                if (! isset($substitutions[$part[0]])) {
-                    throw new Exception\InvalidArgumentException(
-                        'Optional segments with unsubstituted parameters cannot '
-                        . 'contain segments with substituted parameters when using FastRoute'
-                    );
+                // Check substitute value with regex
+                $regex = '~^' . str_replace('/', '\/', $part[1]) . '$~';
+                if (!preg_match($regex, $substitutions[$part[0]])) {
+                    throw new Exception\InvalidArgumentException(sprintf(
+                        'Parameter value for [%s] did not match the regex `%s`',
+                        $part[0],
+                        $part[1]
+                    ));
                 }
 
                 $path .= $substitutions[$part[0]];
-                $paramIdx++;
             }
 
-            // If number of params in route matches with number of params given, use that route.
-            // Otherwise try to find a route that has more params
-            if ($paramIdx === count($substitutions)) {
-                return $path;
+            return $path;
+        }
+
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Expected parameter values for at least [%s], but received [%s]',
+            implode(',', $requiredParameters),
+            implode(',', array_keys($substitutions))
+        ));
+    }
+
+    private function hasRequiredParameters($parts, $substitutions)
+    {
+        $requiredParameters = [];
+
+        foreach ($parts as $part) {
+            if (is_string($part)) {
+                continue;
+            }
+
+            $requiredParameters[] = $part[0];
+        }
+
+        foreach ($requiredParameters as $param) {
+            if (! isset($substitutions[$param])) {
+                return $requiredParameters;
             }
         }
 
-        throw new LogicException('Too many parameters given');
+        return true;
     }
 
     /**
@@ -325,6 +347,7 @@ EOT;
      * approach is done to allow testing against the dispatcher.
      *
      * @param  array|object $data Data from RouteCollection::getData()
+     *
      * @return Dispatcher
      */
     private function getDispatcher($data)
@@ -334,6 +357,7 @@ EOT;
         }
 
         $factory = $this->dispatcherCallback;
+
         return $factory($data);
     }
 
@@ -356,6 +380,7 @@ EOT;
      * methods to the factory.
      *
      * @param array $result
+     *
      * @return RouteResult
      */
     private function marshalFailedRoute(array $result)
@@ -363,14 +388,16 @@ EOT;
         if ($result[0] === Dispatcher::METHOD_NOT_ALLOWED) {
             return RouteResult::fromRouteFailure($result[1]);
         }
+
         return RouteResult::fromRouteFailure();
     }
 
     /**
      * Marshals a route result based on the results of matching and the current HTTP method.
      *
-     * @param array $result
+     * @param array  $result
      * @param string $method
+     *
      * @return RouteResult
      */
     private function marshalMatchedRoute(array $result, $method)
@@ -495,7 +522,7 @@ EOT;
             ));
         }
 
-        $this->hasCache = true;
+        $this->hasCache     = true;
         $this->dispatchData = $dispatchData;
     }
 
@@ -503,6 +530,7 @@ EOT;
      * Save dispatch data to cache
      *
      * @param array $dispatchData
+     *
      * @return int|false bytes written to file or false if error
      * @throws Exception\InvalidCacheDirectoryException If the cache directory
      *     does not exist.
@@ -540,9 +568,10 @@ EOT;
      * Call this method for failed HEAD or OPTIONS requests, to see if another
      * method matches; if so, return the match.
      *
-     * @param string $method
-     * @param string $path
+     * @param string     $method
+     * @param string     $path
      * @param Dispatcher $dispatcher
+     *
      * @return false|array False if no match found, array representing the match
      *     otherwise.
      */
@@ -557,6 +586,7 @@ EOT;
                 return $result;
             }
         }
+
         return false;
     }
 }
