@@ -310,10 +310,19 @@ EOT;
         ));
     }
 
-    private function hasRequiredParameters($parts, $substitutions)
+    /**
+     * Checks if all route parameters are available
+     *
+     * @param array $parts
+     * @param array $substitutions
+     *
+     * @return array|bool
+     */
+    private function hasRequiredParameters(array $parts, array $substitutions)
     {
         $requiredParameters = [];
 
+        // Gather required parameters
         foreach ($parts as $part) {
             if (is_string($part)) {
                 continue;
@@ -322,12 +331,16 @@ EOT;
             $requiredParameters[] = $part[0];
         }
 
+        // check if all required parameters exist
         foreach ($requiredParameters as $param) {
             if (! isset($substitutions[$param])) {
+                // Return the required parameters so they can be used in an
+                // exception if needed
                 return $requiredParameters;
             }
         }
 
+        // All required parameters are available
         return true;
     }
 
