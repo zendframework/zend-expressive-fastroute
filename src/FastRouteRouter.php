@@ -304,7 +304,8 @@ EOT;
 
         // No valid route was found: list minimal required parameters
         throw new Exception\InvalidArgumentException(sprintf(
-            'Expected parameter values for at least [%s], but received [%s]',
+            'Route `%s` expects al least parameter values for [%s], but received [%s]',
+            $name,
             implode(',', $missingParameters),
             implode(',', array_keys($substitutions))
         ));

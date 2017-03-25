@@ -630,7 +630,7 @@ class FastRouteRouterTest extends TestCase
         $router->addRoute($route);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected parameter values for at least [id], but received []');
+        $this->expectExceptionMessage('expects al least parameter values for');
 
         $router->generateUri('foo');
     }

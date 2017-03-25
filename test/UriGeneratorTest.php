@@ -72,7 +72,7 @@ class UriGeneratorTest extends TestCase
                 '/test/{param}',
                 ['id' => 'foo'],
                 InvalidArgumentException::class,
-                'Expected parameter values for at least [param], but received [id]',
+                'expects al least parameter values for',
             ],
 
             ['/te{ param }st', ['param' => 'foo'], '/tefoost', null],
