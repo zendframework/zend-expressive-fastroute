@@ -261,17 +261,17 @@ EOT;
             $substitutions = array_merge($options['defaults'], $substitutions);
         }
 
-        $routeParser        = new RouteParser();
-        $routes             = array_reverse($routeParser->parse($route->getPath()));
-        $requiredParameters = [];
+        $routeParser       = new RouteParser();
+        $routes            = array_reverse($routeParser->parse($route->getPath()));
+        $missingParameters = [];
 
         // One route pattern can correspond to multiple routes if it has optional parts
         foreach ($routes as $parts) {
             // Check if all parameters can be substituted
-            $requiredParameters = $this->hasRequiredParameters($parts, $substitutions);
+            $missingParameters = $this->missingParameters($parts, $substitutions);
 
             // If not all parameters can be substituted, try the next route
-            if ($requiredParameters !== true) {
+            if (! empty($missingParameters)) {
                 continue;
             }
 
@@ -302,25 +302,26 @@ EOT;
             return $path;
         }
 
-        // No valid route was found; explain which minimal required parameters are needed
+        // No valid route was found: list minimal required parameters
         throw new Exception\InvalidArgumentException(sprintf(
             'Expected parameter values for at least [%s], but received [%s]',
-            implode(',', $requiredParameters),
+            implode(',', $missingParameters),
             implode(',', array_keys($substitutions))
         ));
     }
 
     /**
-     * Checks if all route parameters are available
+     * Checks for any missing route parameters
      *
      * @param array $parts
      * @param array $substitutions
      *
-     * @return array|bool
+     * @return array with minimum required parameters if any are missing
+     *               or an empty array if none are missing
      */
-    private function hasRequiredParameters(array $parts, array $substitutions)
+    private function missingParameters(array $parts, array $substitutions)
     {
-        $requiredParameters = [];
+        $missingParameters = [];
 
         // Gather required parameters
         foreach ($parts as $part) {
@@ -328,20 +329,20 @@ EOT;
                 continue;
             }
 
-            $requiredParameters[] = $part[0];
+            $missingParameters[] = $part[0];
         }
 
-        // check if all required parameters exist
-        foreach ($requiredParameters as $param) {
+        // Check if all parameters exist
+        foreach ($missingParameters as $param) {
             if (! isset($substitutions[$param])) {
-                // Return the required parameters so they can be used in an
+                // Return the parameters so they can be used in an
                 // exception if needed
-                return $requiredParameters;
+                return $missingParameters;
             }
         }
 
         // All required parameters are available
-        return true;
+        return [];
     }
 
     /**
