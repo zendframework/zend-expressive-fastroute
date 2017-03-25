@@ -7,7 +7,7 @@
 
 namespace Zend\Expressive\Router;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Create and return an instance of FastRouteRouter.
