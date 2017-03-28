@@ -79,5 +79,7 @@ after_script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer upload-coverage ; fi
 
 notifications:
+  slack:
+    secure: "l8X0mItCLRkp6qYq/sLdOzU8GN5ZEH1RKjGhlmt+c/IQHn85B5ALs5Xtwf25TNcWICL6Xl5Ivk2zXXqsZ0ewfKPjAaKA4DdV8nqOLe5l55mODZRIG4K3+GrR4pLaDdgPRKWU4zN0MfISGavffbBS9JUELYGmtIFPxH4ZrPQWgxYWMA61xpdwzNRe9AJ3xec1CSs8sFY+dt9ehGNSfOatmUBYf9oDMQm6BRhdSdKpT8ixgcGjaQG7xaku1gCW9SiGiEM6aoorbcR36NT+3S6awBjclmQSt3IiYscT9S0JVpEJI7O/WIFJf1cIvcl8wkQs5LPtXXBpHDW9RMh44phDDC2HGpr3k38dtdxGzYaJXJNVQUSl3mLXwTuNoii9Q/VmGPYo1fbWiLo8VUdV+k9A48V3Bvo4MRyEpWBGgTqBW5XiEYbyEvXi3/bGMcR6x94INKBHlEJjMUuIpW1WQ7oldL4xHuYA8YfSNnQPyM2RSvwZ95cHYPmAq3tsJqZdfD9iUd0tQ702De1y4NQ40KcTJLXutzJTZremHuTy1VHzbmvMAjTprBnd0xDfMDonLYkMHDf9VNT+euqEpo5izXsg6WGhUJEoHfBbmL6gsvmx1U4WhmwJ50HYo+yBMEnn6p682lDbhYFsDiO1FGVWarvXHzaDFQCyXvINzqXKKqRLRrs="
   irc: "irc.freenode.org#zftalk.dev"
   email: false
