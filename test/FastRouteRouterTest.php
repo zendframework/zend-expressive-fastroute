@@ -430,7 +430,9 @@ class FastRouteRouterTest extends TestCase
         $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
         $router->addRoute($route);
 
-        $this->setExpectedException(InvalidArgumentException::class, 'unsubstituted parameters');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('unsubstituted parameters');
+
         $router->generateUri('foo', ['extra' => 'segment']);
     }
 
