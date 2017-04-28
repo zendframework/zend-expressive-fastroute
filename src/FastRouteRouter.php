@@ -132,11 +132,11 @@ EOT;
      *   RouteGenerator.
      * - A callable that returns a GroupCountBased dispatcher will be created.
      *
-     * @param null|RouteCollector $router            If not provided, a default
-     *                                               implementation will be used.
-     * @param null|callable       $dispatcherFactory Callable that will return a
-     *                                               FastRoute dispatcher.
-     * @param array               $config            Array of custom configuration options.
+     * @param null|RouteCollector $router If not provided, a default
+     *     implementation will be used.
+     * @param null|callable $dispatcherFactory Callable that will return a
+     *     FastRoute dispatcher.
+     * @param array $config Array of custom configuration options.
      */
     public function __construct(
         RouteCollector $router = null,
@@ -167,11 +167,11 @@ EOT;
         }
 
         if (isset($config[self::CONFIG_CACHE_ENABLED])) {
-            $this->cacheEnabled = (bool) $config[self::CONFIG_CACHE_ENABLED];
+            $this->cacheEnabled = (bool)$config[self::CONFIG_CACHE_ENABLED];
         }
 
         if (isset($config[self::CONFIG_CACHE_FILE])) {
-            $this->cacheFile = (string) $config[self::CONFIG_CACHE_FILE];
+            $this->cacheFile = (string)$config[self::CONFIG_CACHE_FILE];
         }
 
         if ($this->cacheEnabled) {
@@ -228,19 +228,19 @@ EOT;
      * Generate a URI based on a given route.
      *
      * Replacements in FastRoute are written as `{name}` or `{name:<pattern>}`;
-     * this method uses `FastRoute\RouteParser\Std` to search for the best route match
-     * based on the available substitutions and generates a uri.
+     * this method uses `FastRoute\RouteParser\Std` to search for the best route
+     * match based on the available substitutions and generates a uri.
      *
-     * @param string $name          Route name.
-     * @param array  $substitutions Key/value pairs to substitute into the route
-     *                              pattern.
-     * @param array  $options       Key/value option pairs to pass to the router for
-     *                              purposes of generating a URI; takes precedence over
-     *                              options present in route used to generate URI.
+     * @param string $name Route name.
+     * @param array $substitutions Key/value pairs to substitute into the route
+     *     pattern.
+     * @param array $options Key/value option pairs to pass to the router for
+     *     purposes of generating a URI; takes precedence over options present
+     *     in route used to generate URI.
      *
      * @return string URI path generated.
-     * @throws Exception\InvalidArgumentException if the route name is not known or
-     *                              or a parameter value does not match its regex.
+     * @throws Exception\InvalidArgumentException if the route name is not known
+     *     or a parameter value does not match its regex.
      */
     public function generateUri($name, array $substitutions = [], array $options = [])
     {
@@ -317,8 +317,8 @@ EOT;
      * @param array $parts
      * @param array $substitutions
      *
-     * @return array with minimum required parameters if any are missing
-     *               or an empty array if none are missing
+     * @return array with minimum required parameters if any are missing or
+     *     an empty array if none are missing
      */
     private function missingParameters(array $parts, array $substitutions)
     {
@@ -363,7 +363,7 @@ EOT;
      * (which should be derived from the router's getData() method); this
      * approach is done to allow testing against the dispatcher.
      *
-     * @param  array|object $data Data from RouteCollection::getData()
+     * @param array|object $data Data from RouteCollection::getData()
      *
      * @return Dispatcher
      */
@@ -412,7 +412,7 @@ EOT;
     /**
      * Marshals a route result based on the results of matching and the current HTTP method.
      *
-     * @param array  $result
+     * @param array $result
      * @param string $method
      *
      * @return RouteResult
@@ -585,8 +585,8 @@ EOT;
      * Call this method for failed HEAD or OPTIONS requests, to see if another
      * method matches; if so, return the match.
      *
-     * @param string     $method
-     * @param string     $path
+     * @param string $method
+     * @param string $path
      * @param Dispatcher $dispatcher
      *
      * @return false|array False if no match found, array representing the match
