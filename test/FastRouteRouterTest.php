@@ -9,7 +9,7 @@ namespace ZendTest\Expressive\Router;
 
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
@@ -430,7 +430,9 @@ class FastRouteRouterTest extends TestCase
         $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
         $router->addRoute($route);
 
-        $this->setExpectedException(InvalidArgumentException::class, 'unsubstituted parameters');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('unsubstituted parameters');
+
         $router->generateUri('foo', ['extra' => 'segment']);
     }
 
