@@ -5,8 +5,6 @@ language: php
 cache:
   directories:
     - $HOME/.composer/cache
-    - $HOME/.local
-    - vendor
 
 env:
   global:
@@ -22,6 +20,7 @@ matrix:
     - php: 5.6
       env:
         - DEPS=locked
+        - CS_CHECK=true
         - TEST_COVERAGE=true
     - php: 5.6
       env:
@@ -32,7 +31,6 @@ matrix:
     - php: 7
       env:
         - DEPS=locked
-        - CS_CHECK=true
     - php: 7
       env:
         - DEPS=latest
@@ -45,17 +43,17 @@ matrix:
     - php: 7.1
       env:
         - DEPS=latest
-    - php: hhvm
+    - php: 7.2
       env:
         - DEPS=lowest
-    - php: hhvm
+    - php: 7.2
       env:
         - DEPS=locked
-    - php: hhvm
+    - php: 7.2
       env:
         - DEPS=latest
   allow_failures:
-    - php: hhvm
+    - php: 7.2
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
@@ -67,7 +65,7 @@ install:
   - if [[ $DEPS == 'latest' ]]; then travis_retry composer update $COMPOSER_ARGS ; fi
   - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
   - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
-  - composer show
+  - stty cols 120 && composer show
 
 script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
@@ -79,13 +77,3 @@ after_script:
 
 notifications:
   email: false
-  irc:
-    channels:
-      - "irc.freenode.org#zftalk.dev"
-    on_success: change
-    on_failure: always
-  slack:
-    rooms:
-      - secure: "l8X0mItCLRkp6qYq/sLdOzU8GN5ZEH1RKjGhlmt+c/IQHn85B5ALs5Xtwf25TNcWICL6Xl5Ivk2zXXqsZ0ewfKPjAaKA4DdV8nqOLe5l55mODZRIG4K3+GrR4pLaDdgPRKWU4zN0MfISGavffbBS9JUELYGmtIFPxH4ZrPQWgxYWMA61xpdwzNRe9AJ3xec1CSs8sFY+dt9ehGNSfOatmUBYf9oDMQm6BRhdSdKpT8ixgcGjaQG7xaku1gCW9SiGiEM6aoorbcR36NT+3S6awBjclmQSt3IiYscT9S0JVpEJI7O/WIFJf1cIvcl8wkQs5LPtXXBpHDW9RMh44phDDC2HGpr3k38dtdxGzYaJXJNVQUSl3mLXwTuNoii9Q/VmGPYo1fbWiLo8VUdV+k9A48V3Bvo4MRyEpWBGgTqBW5XiEYbyEvXi3/bGMcR6x94INKBHlEJjMUuIpW1WQ7oldL4xHuYA8YfSNnQPyM2RSvwZ95cHYPmAq3tsJqZdfD9iUd0tQ702De1y4NQ40KcTJLXutzJTZremHuTy1VHzbmvMAjTprBnd0xDfMDonLYkMHDf9VNT+euqEpo5izXsg6WGhUJEoHfBbmL6gsvmx1U4WhmwJ50HYo+yBMEnn6p682lDbhYFsDiO1FGVWarvXHzaDFQCyXvINzqXKKqRLRrs="
-    on_success: change
-    on_failure: always
