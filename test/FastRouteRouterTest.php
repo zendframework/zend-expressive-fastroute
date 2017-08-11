@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-fastroute for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-fastroute/blob/master/LICENSE.md New BSD License
  */
 
@@ -448,18 +448,6 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('foo-route', $result->getMatchedRouteName());
     }
 
-    public function testGenerateUriRaisesExceptionForIncompleteUriSubstitutions()
-    {
-        $router = new FastRouteRouter();
-        $route = new Route('/foo[/{param}[/optional-{extra}]]', 'foo', ['GET'], 'foo');
-        $router->addRoute($route);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('unsubstituted parameters');
-
-        $router->generateUri('foo', ['extra' => 'segment']);
-    }
-
     public function uriGeneratorDataProvider()
     {
         return [
@@ -630,5 +618,20 @@ class FastRouteRouterTest extends TestCase
         $this->assertEquals('fooHandler', $result->getMatchedMiddleware());
 
         unlink($cache_file);
+    }
+
+    /**
+     * Test for issue #30
+     */
+    public function testGenerateUriRaisesExceptionForMissingMandatoryParameters()
+    {
+        $router = new FastRouteRouter();
+        $route = new Route('/foo/{id}', 'foo', ['GET'], 'foo');
+        $router->addRoute($route);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('expects at least parameter values for');
+
+        $router->generateUri('foo');
     }
 }

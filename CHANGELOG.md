@@ -8,23 +8,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-### Deprecated
+### Changed
 
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 2.0.1 - TBD
-
-### Added
-
-- Nothing.
+- [#32](https://github.com/zendframework/zend-expressive-fastroute/pull/32)
+  changes to the standard route parser from FastRoute.
 
 ### Deprecated
 
