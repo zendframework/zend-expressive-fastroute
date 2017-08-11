@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#33](https://github.com/zendframework/zend-expressive-fastroute/pull/33)
+  adds PSR-11 Container Interface support.
 
 ### Changed
 
