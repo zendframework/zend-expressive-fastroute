@@ -7,11 +7,11 @@
 
 namespace Zend\Expressive\Router;
 
-use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\Exception;
 use Zend\Stdlib\ArrayUtils;
@@ -28,17 +28,14 @@ class FastRouteRouter implements RouterInterface
 <?php
 return %s;
 EOT;
-
     /**
      * @const string Configuration key used to enable/disable fastroute caching
      */
     const CONFIG_CACHE_ENABLED = 'cache_enabled';
-
     /**
      * @const string Configuration key used to set the cache file path
      */
-    const CONFIG_CACHE_FILE    = 'cache_file';
-
+    const CONFIG_CACHE_FILE = 'cache_file';
     /**
      * HTTP methods that always match when no methods provided.
      */
@@ -47,7 +44,6 @@ EOT;
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
-
     /**
      * HTTP methods implicitly supported by any route
      */
@@ -55,7 +51,6 @@ EOT;
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
-
     /**
      * Standard HTTP methods against which to test HEAD/OPTIONS requests.
      */
@@ -69,23 +64,6 @@ EOT;
         RequestMethod::METHOD_OPTIONS,
         RequestMethod::METHOD_TRACE,
     ];
-
-    /**
-     * Regular expression pattern for identifying a variable subsititution.
-     *
-     * This is an sprintf pattern; the variable name will be substituted for
-     * the final pattern.
-     *
-     * @see \FastRoute\RouteParser\Std for mirror, generic representation.
-     */
-    const VARIABLE_REGEX = <<< 'REGEX'
-\{
-    \s* %s \s*
-    (?:
-        : \s* ([^{}]*(?:\{(?-1)\}[^{}]*)*)
-    )?
-\}
-REGEX;
 
     /**
      * Cache generated route data?
@@ -169,7 +147,7 @@ REGEX;
             $router = $this->createRouter();
         }
 
-        $this->router = $router;
+        $this->router             = $router;
         $this->dispatcherCallback = $dispatcherFactory;
 
         $this->loadConfig($config);
@@ -179,6 +157,7 @@ REGEX;
      * Load configuration parameters
      *
      * @param array $config Array of custom configuration options.
+     *
      * @return void
      */
     private function loadConfig(array $config = null)
@@ -188,11 +167,11 @@ REGEX;
         }
 
         if (isset($config[self::CONFIG_CACHE_ENABLED])) {
-            $this->cacheEnabled = (bool) $config[self::CONFIG_CACHE_ENABLED];
+            $this->cacheEnabled = (bool)$config[self::CONFIG_CACHE_ENABLED];
         }
 
         if (isset($config[self::CONFIG_CACHE_FILE])) {
-            $this->cacheFile = (string) $config[self::CONFIG_CACHE_FILE];
+            $this->cacheFile = (string)$config[self::CONFIG_CACHE_FILE];
         }
 
         if ($this->cacheEnabled) {
@@ -216,6 +195,7 @@ REGEX;
 
     /**
      * @param  Request $request
+     *
      * @return RouteResult
      */
     public function match(Request $request)
@@ -248,11 +228,8 @@ REGEX;
      * Generate a URI based on a given route.
      *
      * Replacements in FastRoute are written as `{name}` or `{name:<pattern>}`;
-     * this method uses a regular expression to search for substitutions that
-     * match, and replaces them with the value provided.
-     *
-     * It does *not* use the pattern to validate that the substitution value is
-     * valid beforehand, however.
+     * this method uses `FastRoute\RouteParser\Std` to search for the best route
+     * match based on the available substitutions and generates a uri.
      *
      * @param string $name Route name.
      * @param array $substitutions Key/value pairs to substitute into the route
@@ -260,9 +237,10 @@ REGEX;
      * @param array $options Key/value option pairs to pass to the router for
      *     purposes of generating a URI; takes precedence over options present
      *     in route used to generate URI.
+     *
      * @return string URI path generated.
-     * @throws Exception\InvalidArgumentException if the route name is not
-     *     known.
+     * @throws Exception\InvalidArgumentException if the route name is not known
+     *     or a parameter value does not match its regex.
      */
     public function generateUri($name, array $substitutions = [], array $options = [])
     {
@@ -277,41 +255,94 @@ REGEX;
         }
 
         $route   = $this->routes[$name];
-        $path    = $route->getPath();
         $options = ArrayUtils::merge($route->getOptions(), $options);
 
         if (! empty($options['defaults'])) {
             $substitutions = array_merge($options['defaults'], $substitutions);
         }
 
-        foreach ($substitutions as $key => $value) {
-            $pattern = sprintf(
-                '~%s~x',
-                sprintf(self::VARIABLE_REGEX, preg_quote($key))
-            );
-            $path = preg_replace($pattern, $value, $path);
+        $routeParser       = new RouteParser();
+        $routes            = array_reverse($routeParser->parse($route->getPath()));
+        $missingParameters = [];
+
+        // One route pattern can correspond to multiple routes if it has optional parts
+        foreach ($routes as $parts) {
+            // Check if all parameters can be substituted
+            $missingParameters = $this->missingParameters($parts, $substitutions);
+
+            // If not all parameters can be substituted, try the next route
+            if (! empty($missingParameters)) {
+                continue;
+            }
+
+            // Generate the path
+            $path = '';
+            foreach ($parts as $part) {
+                if (is_string($part)) {
+                    // Append the string
+                    $path .= $part;
+                    continue;
+                }
+
+                // Check substitute value with regex
+                if (! preg_match('~^' . $part[1] . '$~', $substitutions[$part[0]])) {
+                    throw new Exception\InvalidArgumentException(sprintf(
+                        'Parameter value for [%s] did not match the regex `%s`',
+                        $part[0],
+                        $part[1]
+                    ));
+                }
+
+                // Append the substituted value
+                $path .= $substitutions[$part[0]];
+            }
+
+            // Return generated path
+            return $path;
         }
 
-        // 1. remove optional segments' ending delimiters
-        //    and remove leftover regex char classes like `:[` and `:prefix-[` (issue #18)
-        // 2. split path into an array of optional segments and remove those
-        //    containing unsubstituted parameters starting from the last segment
-        $path = preg_replace('/\]|:.*\[/', '', $path);
-        $segs = array_reverse(explode('[', $path));
-        foreach ($segs as $n => $seg) {
-            if (strpos($seg, '{') !== false) {
-                if (isset($segs[$n - 1])) {
-                    throw new Exception\InvalidArgumentException(
-                        'Optional segments with unsubstituted parameters cannot '
-                        . 'contain segments with substituted parameters when using FastRoute'
-                    );
-                }
-                unset($segs[$n]);
+        // No valid route was found: list minimal required parameters
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Route `%s` expects at least parameter values for [%s], but received [%s]',
+            $name,
+            implode(',', $missingParameters),
+            implode(',', array_keys($substitutions))
+        ));
+    }
+
+    /**
+     * Checks for any missing route parameters
+     *
+     * @param array $parts
+     * @param array $substitutions
+     *
+     * @return array with minimum required parameters if any are missing or
+     *     an empty array if none are missing
+     */
+    private function missingParameters(array $parts, array $substitutions)
+    {
+        $missingParameters = [];
+
+        // Gather required parameters
+        foreach ($parts as $part) {
+            if (is_string($part)) {
+                continue;
+            }
+
+            $missingParameters[] = $part[0];
+        }
+
+        // Check if all parameters exist
+        foreach ($missingParameters as $param) {
+            if (! isset($substitutions[$param])) {
+                // Return the parameters so they can be used in an
+                // exception if needed
+                return $missingParameters;
             }
         }
-        $path = implode('', array_reverse($segs));
 
-        return $path;
+        // All required parameters are available
+        return [];
     }
 
     /**
@@ -331,7 +362,8 @@ REGEX;
      * (which should be derived from the router's getData() method); this
      * approach is done to allow testing against the dispatcher.
      *
-     * @param  array|object $data Data from RouteCollection::getData()
+     * @param array|object $data Data from RouteCollection::getData()
+     *
      * @return Dispatcher
      */
     private function getDispatcher($data)
@@ -341,6 +373,7 @@ REGEX;
         }
 
         $factory = $this->dispatcherCallback;
+
         return $factory($data);
     }
 
@@ -362,6 +395,8 @@ REGEX;
      * If the failure was due to the HTTP method, passes the allowed HTTP
      * methods to the factory.
      *
+     * @param array $result
+     *
      * @return RouteResult
      */
     private function marshalFailedRoute(array $result)
@@ -369,6 +404,7 @@ REGEX;
         if ($result[0] === Dispatcher::METHOD_NOT_ALLOWED) {
             return RouteResult::fromRouteFailure($result[1]);
         }
+
         return RouteResult::fromRouteFailure();
     }
 
@@ -377,6 +413,7 @@ REGEX;
      *
      * @param array $result
      * @param string $method
+     *
      * @return RouteResult
      */
     private function marshalMatchedRoute(array $result, $method)
@@ -415,8 +452,6 @@ REGEX;
 
     /**
      * Inject queued Route instances into the underlying router.
-     *
-     * @param Route $route
      */
     private function injectRoutes()
     {
@@ -491,9 +526,9 @@ REGEX;
         $dispatchData = include $this->cacheFile;
         restore_error_handler();
 
-        // Cache file does not exist; return empty array for dispatch data
+        // Cache file does not exist
         if (false === $dispatchData) {
-            return [];
+            return;
         }
 
         if (! is_array($dispatchData)) {
@@ -503,7 +538,7 @@ REGEX;
             ));
         }
 
-        $this->hasCache = true;
+        $this->hasCache     = true;
         $this->dispatchData = $dispatchData;
     }
 
@@ -511,6 +546,7 @@ REGEX;
      * Save dispatch data to cache
      *
      * @param array $dispatchData
+     *
      * @return int|false bytes written to file or false if error
      * @throws Exception\InvalidCacheDirectoryException If the cache directory
      *     does not exist.
@@ -551,6 +587,7 @@ REGEX;
      * @param string $method
      * @param string $path
      * @param Dispatcher $dispatcher
+     *
      * @return false|array False if no match found, array representing the match
      *     otherwise.
      */
@@ -565,6 +602,7 @@ REGEX;
                 return $result;
             }
         }
+
         return false;
     }
 }

@@ -41,7 +41,7 @@ To run tests:
 - Clone the repository:
 
   ```console
-  $ git clone git@github.com:zendframework/zend-expressive-fastroute.git
+  $ git clone git://github.com/zendframework/zend-expressive-fastroute.git
   $ cd zend-expressive-fastroute
   ```
 
@@ -74,11 +74,10 @@ section on running tests.
 To run CS checks only:
 
 ```console
-$ composer cs
+$ composer cs-check
 ```
 
 To attempt to automatically fix common CS issues:
-
 
 ```console
 $ composer cs-fix
@@ -86,6 +85,18 @@ $ composer cs-fix
 
 If the above fixes any CS issues, please re-run the tests to ensure
 they pass, and make sure you add and commit the changes after verification.
+
+## Running License Checks
+
+File-level docblocks should follow the format demonstrated in `.docheader`. To
+check for conformity, use:
+
+```console
+$ composer license-check
+```
+
+This will flag files that are incorrect, which you can then update. Re-run the
+tool to verify your changes.
 
 ## Recommended Workflow for Contributions
 
