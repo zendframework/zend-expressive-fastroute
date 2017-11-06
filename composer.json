@@ -1,7 +1,6 @@
 {
     "name": "zendframework/zend-expressive-fastroute",
     "description": "FastRoute integration for Expressive",
-    "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
         "expressive",
@@ -9,13 +8,26 @@
         "http",
         "middleware",
         "psr",
-        "psr-7"
+        "psr-7",
+        "zf",
+        "zendframework",
+        "zend-expressive"
     ],
+    "config": {
+        "sort-packages": true
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.1-dev",
             "dev-develop": "2.2-dev"
         }
+    },
+    "support": {
+        "issues": "https://github.com/zendframework/zend-expressive-fastroute/issues",
+        "source": "https://github.com/zendframework/zend-expressive-fastroute",
+        "rss": "https://github.com/zendframework/zend-expressive-fastroute/releases.atom",
+        "slack": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com/c/questions/expressive"
     },
     "require": {
         "php": "^5.6 || ^7.0",
@@ -28,21 +40,21 @@
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.5",
-        "phpunit/phpunit": "^6.0.7 || ^5.7.14",
+        "phpunit/phpunit": "^5.7.23 || ^6.4.3",
         "zendframework/zend-coding-standard": "~1.0.0"
     },
     "conflict": {
         "container-interop/container-interop": "<1.2.0"
     },
     "autoload": {
-      "psr-4": {
-        "Zend\\Expressive\\Router\\": "src/"
-      }
+        "psr-4": {
+            "Zend\\Expressive\\Router\\": "src/"
+        }
     },
     "autoload-dev": {
-      "psr-4": {
-        "ZendTest\\Expressive\\Router\\": "test/"
-      }
+        "psr-4": {
+            "ZendTest\\Expressive\\Router\\": "test/"
+        }
     },
     "scripts": {
         "check": [
@@ -50,11 +62,11 @@
             "@cs-check",
             "@test"
         ],
-        "upload-coverage": "coveralls -v",
-        "cs-check": "phpcs --colors",
-        "cs-fix": "phpcbf --colors",
-        "license-check": "docheader check src/ test/",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
         "test": "phpunit --colors=always",
-        "test-coverage": "phpunit --coverage-clover clover.xml"
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
+        "upload-coverage": "coveralls -v",
+        "license-check": "vendor/bin/docheader check src/ test/"
     }
 }
