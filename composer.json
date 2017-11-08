@@ -13,15 +13,6 @@
         "zendframework",
         "zend-expressive"
     ],
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.1-dev",
-            "dev-develop": "2.2-dev"
-        }
-    },
     "support": {
         "issues": "https://github.com/zendframework/zend-expressive-fastroute/issues",
         "source": "https://github.com/zendframework/zend-expressive-fastroute",
@@ -56,6 +47,15 @@
             "ZendTest\\Expressive\\Router\\": "test/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev",
+            "dev-develop": "2.2-dev"
+        }
+    },
     "scripts": {
         "check": [
             "@license-check",
@@ -67,6 +67,6 @@
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "upload-coverage": "coveralls -v",
-        "license-check": "vendor/bin/docheader check src/ test/"
+        "license-check": "docheader check src/ test/"
     }
 }
