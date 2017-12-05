@@ -2,11 +2,13 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.1 - TBD
+## 2.1.1 - 2017-12-05
 
 ### Added
 
-- Nothing.
+- [#40](https://github.com/zendframework/zend-expressive-fastroute/pull/40) adds
+  support for 3.0.0-dev versions of zend-expressive-router, as there are no API
+  changes at this time.
 
 ### Changed
 
