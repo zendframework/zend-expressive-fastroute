@@ -10,7 +10,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#38](https://github.com/zendframework/zend-expressive-fastroute/pull/38)
+  updates the zend-stdlib dependency to also allow v2 releases, as the
+  functionality we consume is the same between both major versions.
 
 ### Deprecated
 
