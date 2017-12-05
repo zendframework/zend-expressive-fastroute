@@ -1,7 +1,7 @@
 # FastRoute integration for Expressive
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-expressive-fastroute.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-expressive-fastroute)
-[![Coverage Status](https://coveralls.io/repos/zendframework/zend-expressive-fastroute/badge.svg?branch=master)](https://coveralls.io/r/zendframework/zend-expressive-fastroute?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-expressive-fastroute/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-expressive-fastroute?branch=master)
 
 Provides [FastRoute](https://github.com/nikic/FastRoute) integration for
 [Expressive](https://github.com/zendframework/zend-expressive).
