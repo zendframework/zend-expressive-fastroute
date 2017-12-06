@@ -32,9 +32,7 @@ class FastRouteRouterFactory
             ? $container->get('config')
             : [];
 
-        $config = isset($config['router']['fastroute'])
-            ? $config['router']['fastroute']
-            : [];
+        $config = $config['router']['fastroute'] ?? [];
 
         return new FastRouteRouter(null, null, $config);
     }

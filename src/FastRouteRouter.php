@@ -162,22 +162,20 @@ EOT;
     /**
      * Load configuration parameters
      *
-     * @param array $config Array of custom configuration options.
-     *
-     * @return void
+     * @param null|array $config Array of custom configuration options.
      */
-    private function loadConfig(array $config = null)
+    private function loadConfig(array $config = null) : void
     {
         if (null === $config) {
             return;
         }
 
         if (isset($config[self::CONFIG_CACHE_ENABLED])) {
-            $this->cacheEnabled = (bool)$config[self::CONFIG_CACHE_ENABLED];
+            $this->cacheEnabled = (bool) $config[self::CONFIG_CACHE_ENABLED];
         }
 
         if (isset($config[self::CONFIG_CACHE_FILE])) {
-            $this->cacheFile = (string)$config[self::CONFIG_CACHE_FILE];
+            $this->cacheFile = (string) $config[self::CONFIG_CACHE_FILE];
         }
 
         if ($this->cacheEnabled) {
@@ -191,20 +189,13 @@ EOT;
      * Uses the HTTP methods associated (creating sane defaults for an empty
      * list or Route::HTTP_METHOD_ANY) and the path, and uses the path as
      * the name (to allow later lookup of the middleware).
-     *
-     * @param Route $route
      */
-    public function addRoute(Route $route)
+    public function addRoute(Route $route) : void
     {
         $this->routesToInject[] = $route;
     }
 
-    /**
-     * @param  Request $request
-     *
-     * @return RouteResult
-     */
-    public function match(Request $request)
+    public function match(Request $request) : RouteResult
     {
         // Inject any pending routes
         $this->injectRoutes();
@@ -225,7 +216,7 @@ EOT;
             }
         }
 
-        return ($result[0] !== Dispatcher::FOUND)
+        return $result[0] !== Dispatcher::FOUND
             ? $this->marshalFailedRoute($result)
             : $this->marshalMatchedRoute($result, $method);
     }
@@ -248,7 +239,7 @@ EOT;
      * @throws Exception\InvalidArgumentException if the route name is not known
      *     or a parameter value does not match its regex.
      */
-    public function generateUri($name, array $substitutions = [], array $options = [])
+    public function generateUri(string $name, array $substitutions = [], array $options = []) : string
     {
         // Inject any pending routes
         $this->injectRoutes();
@@ -291,7 +282,7 @@ EOT;
                 }
 
                 // Check substitute value with regex
-                if (! preg_match('~^' . $part[1] . '$~', $substitutions[$part[0]])) {
+                if (! preg_match('~^' . $part[1] . '$~', (string) $substitutions[$part[0]])) {
                     throw new Exception\InvalidArgumentException(sprintf(
                         'Parameter value for [%s] did not match the regex `%s`',
                         $part[0],
@@ -319,13 +310,10 @@ EOT;
     /**
      * Checks for any missing route parameters
      *
-     * @param array $parts
-     * @param array $substitutions
-     *
      * @return array with minimum required parameters if any are missing or
      *     an empty array if none are missing
      */
-    private function missingParameters(array $parts, array $substitutions)
+    private function missingParameters(array $parts, array $substitutions) : array
     {
         $missingParameters = [];
 
@@ -353,10 +341,8 @@ EOT;
 
     /**
      * Create a default FastRoute Collector instance
-     *
-     * @return RouteCollector
      */
-    private function createRouter()
+    private function createRouter() : RouteCollector
     {
         return new RouteCollector(new RouteParser, new RouteGenerator);
     }
@@ -372,7 +358,7 @@ EOT;
      *
      * @return Dispatcher
      */
-    private function getDispatcher($data)
+    private function getDispatcher($data) : Dispatcher
     {
         if (! $this->dispatcherCallback) {
             $this->dispatcherCallback = $this->createDispatcherCallback();
@@ -385,10 +371,8 @@ EOT;
 
     /**
      * Return a default implementation of a callback that can return a Dispatcher.
-     *
-     * @return callable
      */
-    private function createDispatcherCallback()
+    private function createDispatcherCallback() : callable
     {
         return function ($data) {
             return new Dispatcher($data);
@@ -400,12 +384,8 @@ EOT;
      *
      * If the failure was due to the HTTP method, passes the allowed HTTP
      * methods to the factory.
-     *
-     * @param array $result
-     *
-     * @return RouteResult
      */
-    private function marshalFailedRoute(array $result)
+    private function marshalFailedRoute(array $result) : RouteResult
     {
         if ($result[0] === Dispatcher::METHOD_NOT_ALLOWED) {
             return RouteResult::fromRouteFailure($result[1]);
@@ -416,13 +396,8 @@ EOT;
 
     /**
      * Marshals a route result based on the results of matching and the current HTTP method.
-     *
-     * @param array $result
-     * @param string $method
-     *
-     * @return RouteResult
      */
-    private function marshalMatchedRoute(array $result, $method)
+    private function marshalMatchedRoute(array $result, string $method) : RouteResult
     {
         $path  = $result[1];
         $route = array_reduce($this->routes, function ($matched, $route) use ($path, $method) {
@@ -459,7 +434,7 @@ EOT;
     /**
      * Inject queued Route instances into the underlying router.
      */
-    private function injectRoutes()
+    private function injectRoutes() : void
     {
         foreach ($this->routesToInject as $index => $route) {
             $this->injectRoute($route);
@@ -469,10 +444,8 @@ EOT;
 
     /**
      * Inject a Route instance into the underlying router.
-     *
-     * @param Route $route
      */
-    private function injectRoute(Route $route)
+    private function injectRoute(Route $route) : void
     {
         // Filling the routes' hash-map is required by the `generateUri` method
         $this->routes[$route->getName()] = $route;
@@ -500,16 +473,14 @@ EOT;
      * FastRoute data generator.
      *
      * If caching is enabled, store the freshly generated data to file.
-     *
-     * @return array
      */
-    private function getDispatchData()
+    private function getDispatchData() : array
     {
         if ($this->hasCache) {
             return $this->dispatchData;
         }
 
-        $dispatchData = $this->router->getData();
+        $dispatchData = (array) $this->router->getData();
 
         if ($this->cacheEnabled) {
             $this->cacheDispatchData($dispatchData);
@@ -521,11 +492,10 @@ EOT;
     /**
      * Load dispatch data from cache
      *
-     * @return void
      * @throws Exception\InvalidCacheException If the cache file contains
      *     invalid data
      */
-    private function loadDispatchData()
+    private function loadDispatchData() : void
     {
         set_error_handler(function () {
         }, E_WARNING); // suppress php warnings
@@ -550,8 +520,6 @@ EOT;
 
     /**
      * Save dispatch data to cache
-     *
-     * @param array $dispatchData
      *
      * @return int|false bytes written to file or false if error
      * @throws Exception\InvalidCacheDirectoryException If the cache directory
@@ -590,14 +558,10 @@ EOT;
      * Call this method for failed HEAD or OPTIONS requests, to see if another
      * method matches; if so, return the match.
      *
-     * @param string $method
-     * @param string $path
-     * @param Dispatcher $dispatcher
-     *
      * @return false|array False if no match found, array representing the match
      *     otherwise.
      */
-    private function probeIntrospectionMethod($method, $path, Dispatcher $dispatcher)
+    private function probeIntrospectionMethod(string $method, string $path, Dispatcher $dispatcher)
     {
         foreach (self::HTTP_METHODS_STANDARD as $testMethod) {
             if ($method === $testMethod) {
