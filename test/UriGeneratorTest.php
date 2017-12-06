@@ -1,14 +1,17 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-fastroute for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-fastroute/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Interop\Http\Server\MiddlewareInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
@@ -134,6 +137,11 @@ class UriGeneratorTest extends TestCase
         );
     }
 
+    private function getMiddleware() : MiddlewareInterface
+    {
+        return $this->prophesize(MiddlewareInterface::class)->reveal();
+    }
+
     /**
      * @param $path
      * @param $substitutions
@@ -144,7 +152,7 @@ class UriGeneratorTest extends TestCase
      */
     public function testRoutes($path, $substitutions, $expected, $message)
     {
-        $this->router->addRoute(new Route($path, 'foo', ['GET'], 'foo'));
+        $this->router->addRoute(new Route($path, $this->getMiddleware(), ['GET'], 'foo'));
 
         if ($message !== null) {
             // Test exceptions

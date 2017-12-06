@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.0alpha1 - TBD
+
+### Added
+
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41) adds
+  support for the zend-expressive-router 3.0 series.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41)
+  removes support for the zend-expressive-router 2.0 series.
+
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41)
+  removes support for PHP 5.6 and PHP 7.0.
+
+### Fixed
+
+- Nothing.
+
 ## 2.2.0 - TBD
 
 ### Added
