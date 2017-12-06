@@ -24,7 +24,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
-## 2.1.2 - TBD
+## 2.1.2 - 2017-12-06
 
 ### Added
 
@@ -40,7 +40,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- [#42](https://github.com/zendframework/zend-expressive-fastroute/pull/42)
+  removes support for the 3.0.0-dev versions of zend-expressive-router, as it
+  contains backwards-incompatible API changes.
 
 ### Fixed
 
