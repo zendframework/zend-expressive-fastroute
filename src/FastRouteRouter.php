@@ -25,37 +25,42 @@ class FastRouteRouter implements RouterInterface
     /**
      * Template used when generating the cache file.
      */
-    const CACHE_TEMPLATE = <<< 'EOT'
+    public const CACHE_TEMPLATE = <<< 'EOT'
 <?php
 return %s;
 EOT;
+
     /**
      * @const string Configuration key used to enable/disable fastroute caching
      */
-    const CONFIG_CACHE_ENABLED = 'cache_enabled';
+    public const CONFIG_CACHE_ENABLED = 'cache_enabled';
+
     /**
      * @const string Configuration key used to set the cache file path
      */
-    const CONFIG_CACHE_FILE = 'cache_file';
+    public const CONFIG_CACHE_FILE = 'cache_file';
+
     /**
      * HTTP methods that always match when no methods provided.
      */
-    const HTTP_METHODS_EMPTY = [
+    public const HTTP_METHODS_EMPTY = [
         RequestMethod::METHOD_GET,
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
+
     /**
      * HTTP methods implicitly supported by any route
      */
-    const HTTP_METHODS_IMPLICIT = [
+    public const HTTP_METHODS_IMPLICIT = [
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
+
     /**
      * Standard HTTP methods against which to test HEAD/OPTIONS requests.
      */
-    const HTTP_METHODS_STANDARD = [
+    public const HTTP_METHODS_STANDARD = [
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_GET,
         RequestMethod::METHOD_POST,
