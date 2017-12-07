@@ -311,12 +311,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-expressive-router.git",
-                "reference": "6b2cfc3bc9ca787effccbabe190bc0aee0c62b68"
+                "reference": "57ebf529def0743ab9e781040e2a3c5b5aeb7533"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/6b2cfc3bc9ca787effccbabe190bc0aee0c62b68",
-                "reference": "6b2cfc3bc9ca787effccbabe190bc0aee0c62b68",
+                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/57ebf529def0743ab9e781040e2a3c5b5aeb7533",
+                "reference": "57ebf529def0743ab9e781040e2a3c5b5aeb7533",
                 "shasum": ""
             },
             "require": {
@@ -363,7 +363,7 @@
                 "zend-expressive",
                 "zf"
             ],
-            "time": "2017-12-06T21:19:34+00:00"
+            "time": "2017-12-07T17:39:11+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",

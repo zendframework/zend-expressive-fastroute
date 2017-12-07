@@ -392,7 +392,7 @@ EOT;
             return RouteResult::fromRouteFailure($result[1]);
         }
 
-        return RouteResult::fromRouteFailure();
+        return RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY);
     }
 
     /**
@@ -419,7 +419,7 @@ EOT;
 
         if (false === $route) {
             // This likely should never occur, but is present for completeness.
-            return RouteResult::fromRouteFailure();
+            return RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY);
         }
 
         $params = $result[2];
