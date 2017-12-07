@@ -11,7 +11,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#43](https://github.com/zendframework/zend-expressive-fastroute/pull/43)
+  updates the `match()` logic to always call `RouteResult::fromRouteFailure()`
+  with an argument; previously, it would omit the argument under specific
+  conditions.
 
 ### Deprecated
 
