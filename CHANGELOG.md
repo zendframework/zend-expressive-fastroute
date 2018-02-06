@@ -2,13 +2,17 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 3.0.0alpha1 - TBD
+## 3.0.0alpha1 - 2018-02-06
 
 ### Added
 
 - [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41) and
   [#46](https://github.com/zendframework/zend-expressive-fastroute/pull/46) add
   support for the zend-expressive-router 3.0 series.
+
+- [#45](https://github.com/zendframework/zend-expressive-fastroute/pull/45) adds
+  `Zend\Expressive\Router\FastRouteRouter\ConfigProvider`, and updates the
+  package to expose it to zend-component-installer.
 
 ### Changed
 
