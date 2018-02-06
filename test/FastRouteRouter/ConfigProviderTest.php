@@ -29,7 +29,7 @@ class ConfigProviderTest extends TestCase
     public function testInvocationReturnsArray() : array
     {
         $config = ($this->provider)();
-        self::assertInternalType('array', $config);
+        $this->assertInternalType('array', $config);
 
         return $config;
     }
@@ -39,15 +39,15 @@ class ConfigProviderTest extends TestCase
      */
     public function testReturnedArrayContainsDependencies(array $config) : void
     {
-        self::assertArrayHasKey('dependencies', $config);
-        self::assertInternalType('array', $config['dependencies']);
+        $this->assertArrayHasKey('dependencies', $config);
+        $this->assertInternalType('array', $config['dependencies']);
 
-        self::assertArrayHasKey('aliases', $config['dependencies']);
-        self::assertInternalType('array', $config['dependencies']['aliases']);
-        self::assertArrayHasKey(RouterInterface::class, $config['dependencies']['aliases']);
+        $this->assertArrayHasKey('aliases', $config['dependencies']);
+        $this->assertInternalType('array', $config['dependencies']['aliases']);
+        $this->assertArrayHasKey(RouterInterface::class, $config['dependencies']['aliases']);
 
-        self::assertArrayHasKey('factories', $config['dependencies']);
-        self::assertInternalType('array', $config['dependencies']['factories']);
-        self::assertArrayHasKey(FastRouteRouter::class, $config['dependencies']['factories']);
+        $this->assertArrayHasKey('factories', $config['dependencies']);
+        $this->assertInternalType('array', $config['dependencies']['factories']);
+        $this->assertArrayHasKey(FastRouteRouter::class, $config['dependencies']['factories']);
     }
 }
