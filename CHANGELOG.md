@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41) adds
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41) and
+  [#46](https://github.com/zendframework/zend-expressive-fastroute/pull/46) add
   support for the zend-expressive-router 3.0 series.
 
 ### Changed
