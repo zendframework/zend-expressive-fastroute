@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace ZendTest\Expressive\Router\FastRouteRouter;
 
 use PHPUnit\Framework\TestCase;
+use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\FastRouteRouter\ConfigProvider;
 use Zend\Expressive\Router\RouterInterface;
 
@@ -40,8 +41,13 @@ class ConfigProviderTest extends TestCase
     {
         self::assertArrayHasKey('dependencies', $config);
         self::assertInternalType('array', $config['dependencies']);
+
+        self::assertArrayHasKey('aliases', $config['dependencies']);
+        self::assertInternalType('array', $config['dependencies']['aliases']);
+        self::assertArrayHasKey(RouterInterface::class, $config['dependencies']['aliases']);
+
         self::assertArrayHasKey('factories', $config['dependencies']);
         self::assertInternalType('array', $config['dependencies']['factories']);
-        self::assertArrayHasKey(RouterInterface::class, $config['dependencies']['factories']);
+        self::assertArrayHasKey(FastRouteRouter::class, $config['dependencies']['factories']);
     }
 }

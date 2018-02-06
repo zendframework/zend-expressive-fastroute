@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Zend\Expressive\Router\FastRouteRouter;
 
+use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\FastRouteRouterFactory;
 use Zend\Expressive\Router\RouterInterface;
 
@@ -24,8 +25,11 @@ class ConfigProvider
     public function getDependencies() : array
     {
         return [
+            'aliases' => [
+                RouterInterface::class => FastRouteRouter::class,
+            ],
             'factories' => [
-                RouterInterface::class => FastRouteRouterFactory::class,
+                FastRouteRouter::class => FastRouteRouterFactory::class,
             ],
         ];
     }
