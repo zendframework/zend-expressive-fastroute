@@ -11,9 +11,9 @@ namespace ZendTest\Expressive\Router;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Interop\Http\Server\MiddlewareInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
