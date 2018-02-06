@@ -57,7 +57,7 @@
             "dev-release-3.0.0": "3.0.x-dev"
         },
         "zf": {
-            "config-provider": "Zend\\Expressive\\Router\\ConfigProvider"
+            "config-provider": "Zend\\Expressive\\Router\\FastRouteRouter\\ConfigProvider"
         }
     },
     "scripts": {
