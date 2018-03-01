@@ -214,15 +214,8 @@ EOT;
             $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
             if ($introspectionResult) {
                 $routeResult = $this->marshalMatchedRoute($introspectionResult, $method);
-
                 if ($routeResult->isSuccess()) {
-                    $route = $routeResult->getMatchedRoute();
-
-                    return RouteResult::fromRoute(new Route(
-                        $route->getPath(),
-                        $route->getMiddleware(),
-                        $result[1]
-                    ));
+                    return RouteResult::fromRouteFailure($result[1]);
                 }
 
                 return $routeResult;

@@ -226,9 +226,9 @@ class FastRouteRouterTest extends TestCase
         $router->addRoute($route); // Must add, so we can determine middleware later
         $result = $router->match($request->reveal());
         $this->assertInstanceOf(RouteResult::class, $result);
-        $this->assertTrue($result->isSuccess());
-        $routeMatched = $result->getMatchedRoute();
-        $this->assertTrue($routeMatched->implicitOptions());
+        $this->assertFalse($result->isSuccess());
+        $this->assertFalse($result->getMatchedRoute());
+        $this->assertSame(['POST', $method], $result->getAllowedMethods());
     }
 
     public function testRouteNotSpecifyingOptionsGetOrHeadMatchesOptions()
@@ -249,7 +249,8 @@ class FastRouteRouterTest extends TestCase
         $router->addRoute($route); // Must add, so we can determine middleware later
         $result = $router->match($request->reveal());
         $this->assertInstanceOf(RouteResult::class, $result);
-        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isSuccess());
+        $this->assertSame(['POST'], $result->getAllowedMethods());
     }
 
     public function testRouteNotSpecifyingGetOrHeadDoesMatcheshHead()
@@ -270,7 +271,8 @@ class FastRouteRouterTest extends TestCase
         $router->addRoute($route); // Must add, so we can determine middleware later
         $result = $router->match($request->reveal());
         $this->assertInstanceOf(RouteResult::class, $result);
-        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isSuccess());
+        $this->assertSame(['POST'], $result->getAllowedMethods());
     }
 
     /**
