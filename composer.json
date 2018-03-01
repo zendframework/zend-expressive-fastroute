@@ -51,10 +51,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ZendTest\\Expressive\\Router\\": [
-                "test/",
-                "vendor/zendframework/zend-expressive-router/test"
-            ]
+            "ZendTest\\Expressive\\Router\\": "test/"
         }
     },
     "config": {

@@ -313,7 +313,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webimpress/zend-expressive-router",
-                "reference": "cb8a4953917f628e542ab0c2d9e4ade263a89272"
+                "reference": "9f9ff4ca5ef9e252e488434c5645c197f4d00c97"
             },
             "require": {
                 "fig/http-message-util": "^1.1.2",
@@ -397,7 +397,7 @@
                 "slack": "https://zendframework-slack.herokuapp.com",
                 "forum": "https://discourse.zendframework.com/c/questions/expressive"
             },
-            "time": "2018-03-01T20:37:45+00:00"
+            "time": "2018-03-01T22:27:50+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",

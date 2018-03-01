@@ -9,15 +9,12 @@ declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
-use PHPUnit\Framework\TestCase;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\RouterInterface;
-use ZendTest\Expressive\Router\Middleware\ImplicitOptionsMiddlewareIntegrationTestTrait;
+use Zend\Expressive\Router\Test\IntegrationTest as RouterIntegrationTest;
 
-class ImplicitOptionsMiddlewareIntegrationTest extends TestCase
+class IntegrationTest extends RouterIntegrationTest
 {
-    use ImplicitOptionsMiddlewareIntegrationTestTrait;
-
     public function getRouter() : RouterInterface
     {
         return new FastRouteRouter();
