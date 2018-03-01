@@ -178,7 +178,7 @@ class FastRouteRouterTest extends TestCase
         $this->assertInstanceOf(RouteResult::class, $result);
         $this->assertTrue($result->isSuccess());
         $this->assertSame('/foo^GET', $result->getMatchedRouteName());
-        $this->assertSame($middleware, $result->getMatchedMiddleware());
+        $this->assertSame($middleware, $result->getMatchedRoute()->getMiddleware());
         $this->assertSame(['bar' => 'baz'], $result->getMatchedParams());
 
         return ['route' => $route, 'result' => $result];
@@ -628,7 +628,7 @@ class FastRouteRouterTest extends TestCase
         $this->assertInstanceOf(RouteResult::class, $result);
         $this->assertTrue($result->isSuccess());
         $this->assertSame('foo', $result->getMatchedRouteName());
-        $this->assertSame($middleware, $result->getMatchedMiddleware());
+        $this->assertSame($middleware, $result->getMatchedRoute()->getMiddleware());
 
         unlink($cache_file);
     }
