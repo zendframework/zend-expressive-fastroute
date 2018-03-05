@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d1639849675bb27034d18a929ab5858",
+    "content-hash": "b9cf309608346a92cf3f36f8c415974e",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -341,21 +341,16 @@
                 "psr-15",
                 "webimpress"
             ],
+            "abandoned": "psr/http-server-middleware",
             "time": "2017-10-17T17:31:10+00:00"
         },
         {
             "name": "zendframework/zend-expressive-router",
-            "version": "2.2.0",
+            "version": "dev-fixes",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/zend-expressive-router.git",
-                "reference": "f6eac53d39cdbf7b6db11b3e6bb3565896633de4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/f6eac53d39cdbf7b6db11b3e6bb3565896633de4",
-                "reference": "f6eac53d39cdbf7b6db11b3e6bb3565896633de4",
-                "shasum": ""
+                "url": "https://github.com/webimpress/zend-expressive-router",
+                "reference": "e6c22d7eacc2577e9149399a52c4cf4db69f1897"
             },
             "require": {
                 "fig/http-message-util": "^1.1.2",
@@ -365,8 +360,9 @@
             },
             "require-dev": {
                 "malukenho/docheader": "^0.1.5",
-                "phpunit/phpunit": "^6.0.8 || ^5.7.15",
-                "zendframework/zend-coding-standard": "~1.0.0"
+                "phpunit/phpunit": "^5.7.23 || ^6.4.3",
+                "zendframework/zend-coding-standard": "~1.0.0",
+                "zendframework/zend-diactoros": "^1.7.1"
             },
             "suggest": {
                 "zendframework/zend-expressive-aurarouter": "^1.0 to use the Aura.Router routing adapter",
@@ -376,8 +372,9 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.2-dev",
-                    "dev-develop": "2.3-dev"
+                    "dev-master": "2.3.x-dev",
+                    "dev-develop": "2.4.x-dev",
+                    "dev-release-3.0.0": "3.0.x-dev"
                 }
             },
             "autoload": {
@@ -385,7 +382,33 @@
                     "Zend\\Expressive\\Router\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "ZendTest\\Expressive\\Router\\": "test/"
+                }
+            },
+            "scripts": {
+                "check": [
+                    "@license-check",
+                    "@cs-check",
+                    "@test"
+                ],
+                "cs-check": [
+                    "phpcs"
+                ],
+                "cs-fix": [
+                    "phpcbf"
+                ],
+                "test": [
+                    "phpunit --colors=always"
+                ],
+                "test-coverage": [
+                    "phpunit --colors=always --coverage-clover clover.xml"
+                ],
+                "license-check": [
+                    "docheader check src/ test/"
+                ]
+            },
             "license": [
                 "BSD-3-Clause"
             ],
@@ -395,9 +418,19 @@
                 "http",
                 "middleware",
                 "psr",
-                "psr-7"
+                "psr-7",
+                "zend-expressive",
+                "zendframework",
+                "zf"
             ],
-            "time": "2017-10-09T18:44:11+00:00"
+            "support": {
+                "issues": "https://github.com/zendframework/zend-expressive-router/issues",
+                "source": "https://github.com/zendframework/zend-expressive-router",
+                "rss": "https://github.com/zendframework/zend-expressive-router/releases.atom",
+                "slack": "https://zendframework-slack.herokuapp.com",
+                "forum": "https://discourse.zendframework.com/c/questions/expressive"
+            },
+            "time": "2018-03-05T18:30:45+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -2329,11 +2362,65 @@
                 "zf"
             ],
             "time": "2016-11-09T21:30:43+00:00"
+        },
+        {
+            "name": "zendframework/zend-diactoros",
+            "version": "1.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-diactoros.git",
+                "reference": "bf26aff803a11c5cc8eb7c4878a702c403ec67f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/bf26aff803a11c5cc8eb7c4878a702c403ec67f1",
+                "reference": "bf26aff803a11c5cc8eb7c4878a702c403ec67f1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0",
+                "psr/http-message": "^1.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "phpunit/phpunit": "^5.7.16 || ^6.0.8",
+                "zendframework/zend-coding-standard": "~1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.7.x-dev",
+                    "dev-develop": "1.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Diactoros\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "PSR HTTP Message implementations",
+            "homepage": "https://github.com/zendframework/zend-diactoros",
+            "keywords": [
+                "http",
+                "psr",
+                "psr-7"
+            ],
+            "time": "2018-02-26T15:44:50+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "zendframework/zend-expressive-router": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
