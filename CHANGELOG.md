@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.0rc1 - 2018-03-05
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#47](https://github.com/zendframework/zend-expressive-fastroute/pull/47)
+  updates the package to pin to zend-expressive-router 3.0.0rc1 or later.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#47](https://github.com/zendframework/zend-expressive-fastroute/pull/47)
+  fixes an issue with how a failure result is marshaled when the path patches
+  but the request method does not. The package now correctly aggregates allowed
+  methods for the route result failure instance.
+
 ## 3.0.0alpha1 - 2018-02-06
 
 ### Added
