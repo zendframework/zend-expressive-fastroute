@@ -11,9 +11,9 @@ namespace ZendTest\Expressive\Router;
 
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\RouterInterface;
-use Zend\Expressive\Router\Test\IntegrationTest as RouterIntegrationTest;
+use Zend\Expressive\Router\Test\ImplicitMethodsIntegrationTest as RouterIntegrationTest;
 
-class IntegrationTest extends RouterIntegrationTest
+class ImplicitMethodsIntegrationTest extends RouterIntegrationTest
 {
     public function getRouter() : RouterInterface
     {

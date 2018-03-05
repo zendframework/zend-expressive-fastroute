@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "40b98499499f66455e320bbb1d4b760b",
+    "content-hash": "de84de76a6c9ffa187dfe7bd2b6df2dc",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -309,11 +309,17 @@
         },
         {
             "name": "zendframework/zend-expressive-router",
-            "version": "dev-hotfix/options-request",
+            "version": "3.0.0rc1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webimpress/zend-expressive-router",
-                "reference": "ea983360407033a84976991160f7cba416425ab9"
+                "url": "https://github.com/zendframework/zend-expressive-router.git",
+                "reference": "a131ab7f555e5a75458cae870f7bb44381eac7fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/a131ab7f555e5a75458cae870f7bb44381eac7fa",
+                "reference": "a131ab7f555e5a75458cae870f7bb44381eac7fa",
+                "shasum": ""
             },
             "require": {
                 "fig/http-message-util": "^1.1.2",
@@ -349,55 +355,22 @@
                     "Zend\\Expressive\\Router\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ZendTest\\Expressive\\Router\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@license-check",
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ],
-                "license-check": [
-                    "docheader check src/ test/"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Router subcomponent for Expressive",
             "keywords": [
+                "ZendFramework",
                 "expressive",
                 "http",
                 "middleware",
                 "psr",
                 "psr-7",
                 "zend-expressive",
-                "zendframework",
                 "zf"
             ],
-            "support": {
-                "issues": "https://github.com/zendframework/zend-expressive-router/issues",
-                "source": "https://github.com/zendframework/zend-expressive-router",
-                "rss": "https://github.com/zendframework/zend-expressive-router/releases.atom",
-                "slack": "https://zendframework-slack.herokuapp.com",
-                "forum": "https://discourse.zendframework.com/c/questions/expressive"
-            },
-            "time": "2018-03-02T23:54:01+00:00"
+            "time": "2018-03-05T14:14:24+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -2290,7 +2263,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "zendframework/zend-expressive-router": 20
+        "zendframework/zend-expressive-router": 5
     },
     "prefer-stable": false,
     "prefer-lowest": false,
