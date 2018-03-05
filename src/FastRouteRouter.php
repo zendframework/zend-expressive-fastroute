@@ -215,7 +215,12 @@ EOT;
         ) {
             $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
             if ($introspectionResult) {
-                return $this->marshalMatchedRoute($introspectionResult, $method);
+                $routeResult = $this->marshalMatchedRoute($introspectionResult, $method);
+                if ($routeResult->isSuccess()) {
+                    return RouteResult::fromRouteFailure($result[1]);
+                }
+
+                return $routeResult;
             }
         }
 
