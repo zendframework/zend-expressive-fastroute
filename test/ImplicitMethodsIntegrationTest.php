@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
+use Generator;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\Test\ImplicitMethodsIntegrationTest as RouterIntegrationTest;
@@ -18,5 +19,14 @@ class ImplicitMethodsIntegrationTest extends RouterIntegrationTest
     public function getRouter() : RouterInterface
     {
         return new FastRouteRouter();
+    }
+
+    public function implicitRoutesAndRequests() : Generator
+    {
+        // @codingStandardsIgnoreStart
+        //                  route                     route options, request       params
+        yield 'static'  => ['/api/v1/me',             [],            '/api/v1/me', []];
+        yield 'dynamic' => ['/api/v{version:\d+}/me', [],            '/api/v3/me', ['version' => '3']];
+        // @codingStandardsIgnoreEnd
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-fastroute for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2015-2018 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-fastroute/blob/master/LICENSE.md New BSD License
  */
 
@@ -46,14 +46,6 @@ EOT;
      */
     public const HTTP_METHODS_EMPTY = [
         RequestMethod::METHOD_GET,
-        RequestMethod::METHOD_HEAD,
-        RequestMethod::METHOD_OPTIONS,
-    ];
-
-    /**
-     * HTTP methods implicitly supported by any route
-     */
-    public const HTTP_METHODS_IMPLICIT = [
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
@@ -207,20 +199,6 @@ EOT;
         $method     = $request->getMethod();
         $dispatcher = $this->getDispatcher($dispatchData);
         $result     = $dispatcher->dispatch($method, $path);
-
-        if ($result[0] !== Dispatcher::FOUND
-            && in_array($method, self::HTTP_METHODS_IMPLICIT, true)
-        ) {
-            $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
-            if ($introspectionResult) {
-                $routeResult = $this->marshalMatchedRoute($introspectionResult, $method);
-                if ($routeResult->isSuccess()) {
-                    return RouteResult::fromRouteFailure($result[1]);
-                }
-
-                return $routeResult;
-            }
-        }
 
         return $result[0] !== Dispatcher::FOUND
             ? $this->marshalFailedRoute($result)
@@ -423,8 +401,7 @@ EOT;
         }, false);
 
         if (false === $route) {
-            // This likely should never occur, but is present for completeness.
-            return RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY);
+            return $this->marshalMethodNotAllowedResult($result);
         }
 
         $params = $result[2];
@@ -557,28 +534,21 @@ EOT;
         );
     }
 
-    /**
-     * Dispatch the given path against the set of standard methods to see if a
-     * match exists.
-     *
-     * Call this method for failed HEAD or OPTIONS requests, to see if another
-     * method matches; if so, return the match.
-     *
-     * @return false|array False if no match found, array representing the match
-     *     otherwise.
-     */
-    private function probeIntrospectionMethod(string $method, string $path, Dispatcher $dispatcher)
+    private function marshalMethodNotAllowedResult(array $result) : RouteResult
     {
-        foreach (self::HTTP_METHODS_STANDARD as $testMethod) {
-            if ($method === $testMethod) {
-                continue;
+        $path  = $result[1];
+        $allowedMethods = array_reduce($this->routes, function ($allowedMethods, $route) use ($path) {
+            if ($path !== $route->getPath()) {
+                return $allowedMethods;
             }
-            $result = $dispatcher->dispatch($testMethod, $path);
-            if ($result[0] === Dispatcher::FOUND) {
-                return $result;
-            }
-        }
 
-        return false;
+            return array_merge($allowedMethods, $route->getAllowedMethods());
+        }, []);
+
+        $allowedMethods = array_unique($allowedMethods);
+
+        return empty($allowedMethods)
+            ? RouteResult::fromRouteFailure(Route::METHOD_ANY)
+            : RouteResult::fromRouteFailure($allowedMethods);
     }
 }

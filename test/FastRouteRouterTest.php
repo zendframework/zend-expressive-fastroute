@@ -279,7 +279,7 @@ class FastRouteRouterTest extends TestCase
     /**
      * With GET provided explicitly, FastRoute will match a HEAD request.
      */
-    public function testRouteSpecifyingGetMatchesHead()
+    public function testRouteSpecifyingGetDoesNotMatchHead()
     {
         $route = new Route('/foo', $this->getMiddleware(), [RequestMethod::METHOD_GET]);
 
@@ -297,7 +297,7 @@ class FastRouteRouterTest extends TestCase
         $router->addRoute($route); // Must add, so we can determine middleware later
         $result = $router->match($request->reveal());
         $this->assertInstanceOf(RouteResult::class, $result);
-        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isSuccess());
     }
 
     public function testMatchFailureDueToHttpMethodReturnsRouteResultWithAllowedMethods()

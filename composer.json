@@ -26,14 +26,15 @@
         "nikic/fast-route": "^1.2",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0.1",
-        "zendframework/zend-expressive-router": "^3.0.0rc1",
+        "zendframework/zend-expressive-router": "^3.0.0rc2",
         "zendframework/zend-stdlib": "^2.0 || ^3.1"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.6",
         "phpunit/phpunit": "^7.0.2",
         "zendframework/zend-coding-standard": "~1.0.0",
-        "zendframework/zend-diactoros": "^1.7"
+        "zendframework/zend-diactoros": "^1.7",
+        "zendframework/zend-stratigility": "^3.0.0-rc1"
     },
     "conflict": {
         "container-interop/container-interop": "<1.2.0"

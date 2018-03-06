@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.0rc2 - 2018-03-06
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#49](https://github.com/zendframework/zend-expressive-fastroute/pull/49)
+  updates the minimum supported version of zend-expressive-router to 3.0.0rc2.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#49](https://github.com/zendframework/zend-expressive-fastroute/pull/49)
+  fixes how the router detects successful path-based matches when the HTTP
+  method is not supported, ensuring that a correct list of allowed HTTP methods
+  is generated for a route result failure.
+
 ## 3.0.0rc1 - 2018-03-05
 
 ### Added
