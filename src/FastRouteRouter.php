@@ -401,8 +401,7 @@ EOT;
         }, false);
 
         if (false === $route) {
-            // This likely should never occur, but is present for completeness.
-            return RouteResult::fromRouteFailure([]);
+            return $this->marshalMethodNotAllowedResult($result);
         }
 
         $params = $result[2];
@@ -533,5 +532,23 @@ EOT;
             $this->cacheFile,
             sprintf(self::CACHE_TEMPLATE, var_export($dispatchData, true))
         );
+    }
+
+    private function marshalMethodNotAllowedResult(array $result) : RouteResult
+    {
+        $path  = $result[1];
+        $allowedMethods = array_reduce($this->routes, function ($allowedMethods, $route) use ($path) {
+            if ($path !== $route->getPath()) {
+                return $allowedMethods;
+            }
+
+            return array_merge($allowedMethods, $route->getAllowedMethods());
+        }, []);
+
+        $allowedMethods = array_unique($allowedMethods);
+
+        return empty($allowedMethods)
+            ? RouteResult::fromRouteFailure(Route::METHOD_ANY)
+            : RouteResult::fromRouteFailure($allowedMethods);
     }
 }
