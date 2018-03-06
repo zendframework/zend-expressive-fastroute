@@ -547,8 +547,6 @@ EOT;
 
         $allowedMethods = array_unique($allowedMethods);
 
-        return empty($allowedMethods)
-            ? RouteResult::fromRouteFailure(Route::METHOD_ANY)
-            : RouteResult::fromRouteFailure($allowedMethods);
+        return RouteResult::fromRouteFailure($allowedMethods ?: Route::HTTP_METHOD_ANY);
     }
 }
