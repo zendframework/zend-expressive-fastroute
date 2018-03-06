@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d28306afa86dff3fa3f9d107e6ec6378",
+    "content-hash": "a6e41a713c2593051558358071c1f1f8",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -309,16 +309,16 @@
         },
         {
             "name": "zendframework/zend-expressive-router",
-            "version": "dev-head-options-requests",
+            "version": "3.0.0rc2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webimpress/zend-expressive-router.git",
-                "reference": "c1e704096b37897410414246a09bd00e186e41c7"
+                "url": "https://github.com/zendframework/zend-expressive-router.git",
+                "reference": "97ea9940c72222586e832913529b097ddcc0b2e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webimpress/zend-expressive-router/zipball/c1e704096b37897410414246a09bd00e186e41c7",
-                "reference": "c1e704096b37897410414246a09bd00e186e41c7",
+                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/97ea9940c72222586e832913529b097ddcc0b2e4",
+                "reference": "97ea9940c72222586e832913529b097ddcc0b2e4",
                 "shasum": ""
             },
             "require": {
@@ -356,55 +356,22 @@
                     "Zend\\Expressive\\Router\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ZendTest\\Expressive\\Router\\": "test/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@license-check",
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always"
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ],
-                "license-check": [
-                    "docheader check src/ test/"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "description": "Router subcomponent for Expressive",
             "keywords": [
+                "ZendFramework",
                 "expressive",
                 "http",
                 "middleware",
                 "psr",
                 "psr-7",
                 "zend-expressive",
-                "zendframework",
                 "zf"
             ],
-            "support": {
-                "issues": "https://github.com/zendframework/zend-expressive-router/issues",
-                "source": "https://github.com/zendframework/zend-expressive-router",
-                "rss": "https://github.com/zendframework/zend-expressive-router/releases.atom",
-                "slack": "https://zendframework-slack.herokuapp.com",
-                "forum": "https://discourse.zendframework.com/c/questions/expressive"
-            },
-            "time": "2018-03-06T17:43:52+00:00"
+            "time": "2018-03-06T22:42:26+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -2405,17 +2372,10 @@
             "time": "2018-02-26T15:56:54+00:00"
         }
     ],
-    "aliases": [
-        {
-            "alias": "3.0.0rc2",
-            "alias_normalized": "3.0.0.0-RC2",
-            "version": "dev-head-options-requests",
-            "package": "zendframework/zend-expressive-router"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "zendframework/zend-expressive-router": 20,
+        "zendframework/zend-expressive-router": 5,
         "zendframework/zend-stratigility": 5
     },
     "prefer-stable": false,
