@@ -366,7 +366,7 @@ EOT;
             return RouteResult::fromRouteFailure($result[1]);
         }
 
-        return RouteResult::fromRouteFailure([]);
+        return RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY);
     }
 
     /**
@@ -534,6 +534,6 @@ EOT;
 
         $allowedMethods = array_unique($allowedMethods);
 
-        return RouteResult::fromRouteFailure($allowedMethods ?: []);
+        return RouteResult::fromRouteFailure($allowedMethods ?: Route::HTTP_METHOD_ANY);
     }
 }
