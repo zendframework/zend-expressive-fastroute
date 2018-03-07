@@ -42,15 +42,6 @@ EOT;
     public const CONFIG_CACHE_FILE = 'cache_file';
 
     /**
-     * HTTP methods that always match when no methods provided.
-     */
-    public const HTTP_METHODS_EMPTY = [
-        RequestMethod::METHOD_GET,
-        RequestMethod::METHOD_HEAD,
-        RequestMethod::METHOD_OPTIONS,
-    ];
-
-    /**
      * Standard HTTP methods against which to test HEAD/OPTIONS requests.
      */
     public const HTTP_METHODS_STANDARD = [
@@ -375,7 +366,7 @@ EOT;
             return RouteResult::fromRouteFailure($result[1]);
         }
 
-        return RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY);
+        return RouteResult::fromRouteFailure([]);
     }
 
     /**
@@ -442,10 +433,6 @@ EOT;
 
         if ($methods === Route::HTTP_METHOD_ANY) {
             $methods = self::HTTP_METHODS_STANDARD;
-        }
-
-        if (empty($methods)) {
-            $methods = self::HTTP_METHODS_EMPTY;
         }
 
         $this->router->addRoute($methods, $route->getPath(), $route->getPath());

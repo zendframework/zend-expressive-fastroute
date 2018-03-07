@@ -140,11 +140,7 @@ class FastRouteRouterTest extends TestCase
     {
         $route = new Route('/foo', $this->getMiddleware(), []);
         $this->fastRouter
-            ->addRoute(
-                FastRouteRouter::HTTP_METHODS_EMPTY,
-                '/foo',
-                '/foo'
-            )
+            ->addRoute([], '/foo', '/foo')
             ->shouldBeCalled();
 
         $router = $this->getRouter();
