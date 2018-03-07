@@ -334,7 +334,7 @@ class FastRouteRouterTest extends TestCase
         $this->assertInstanceOf(RouteResult::class, $result);
         $this->assertTrue($result->isFailure());
         $this->assertFalse($result->isMethodFailure());
-        $this->assertSame(['*'], $result->getAllowedMethods());
+        $this->assertSame(Route::HTTP_METHOD_ANY, $result->getAllowedMethods());
     }
 
     public function generatedUriProvider()
