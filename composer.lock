@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a6e41a713c2593051558358071c1f1f8",
+    "content-hash": "f86e962b5cb3402be3bdf6a37feb21e0",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -309,16 +309,16 @@
         },
         {
             "name": "zendframework/zend-expressive-router",
-            "version": "3.0.0rc2",
+            "version": "3.0.0rc3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-expressive-router.git",
-                "reference": "97ea9940c72222586e832913529b097ddcc0b2e4"
+                "reference": "c4380e07a96fede84e8eabbe2698120fa3df7332"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/97ea9940c72222586e832913529b097ddcc0b2e4",
-                "reference": "97ea9940c72222586e832913529b097ddcc0b2e4",
+                "url": "https://api.github.com/repos/zendframework/zend-expressive-router/zipball/c4380e07a96fede84e8eabbe2698120fa3df7332",
+                "reference": "c4380e07a96fede84e8eabbe2698120fa3df7332",
                 "shasum": ""
             },
             "require": {
@@ -371,7 +371,7 @@
                 "zend-expressive",
                 "zf"
             ],
-            "time": "2018-03-06T22:42:26+00:00"
+            "time": "2018-03-07T15:38:28+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",

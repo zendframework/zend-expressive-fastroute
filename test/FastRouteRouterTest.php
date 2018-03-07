@@ -136,20 +136,6 @@ class FastRouteRouterTest extends TestCase
         $router->generateUri($route->getName());
     }
 
-    public function testIfRouteSpecifiesNoHttpMethodsFastRouteIsPassedHardCodedListOfMethods()
-    {
-        $route = new Route('/foo', $this->getMiddleware(), []);
-        $this->fastRouter
-            ->addRoute([], '/foo', '/foo')
-            ->shouldBeCalled();
-
-        $router = $this->getRouter();
-        $router->addRoute($route);
-
-        // routes are not injected until match or generateUri
-        $router->generateUri($route->getName());
-    }
-
     public function testMatchingRouteShouldReturnSuccessfulRouteResult()
     {
         $middleware = $this->getMiddleware();
@@ -654,24 +640,5 @@ class FastRouteRouterTest extends TestCase
         foreach (FastRouteRouter::HTTP_METHODS_STANDARD as $method) {
             yield $method => [$method];
         }
-    }
-
-    /**
-     * @dataProvider method
-     */
-    public function testNoMethodsAllowedForRoute(string $method)
-    {
-        $router = new FastRouteRouter();
-        $route = new Route('/foo', $this->getMiddleware(), []);
-        $router->addRoute($route);
-
-        $request = new ServerRequest(['REQUEST_METHOD' => $method], [], '/foo', $method);
-
-        $result = $router->match($request);
-
-        $this->assertFalse($result->getMatchedRoute());
-        $this->assertSame([], $result->getAllowedMethods(), $method);
-        $this->assertTrue($result->isFailure());
-        $this->assertTrue($result->isMethodFailure());
     }
 }
