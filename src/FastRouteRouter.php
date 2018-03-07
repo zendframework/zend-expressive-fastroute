@@ -42,15 +42,6 @@ EOT;
     public const CONFIG_CACHE_FILE = 'cache_file';
 
     /**
-     * HTTP methods that always match when no methods provided.
-     */
-    public const HTTP_METHODS_EMPTY = [
-        RequestMethod::METHOD_GET,
-        RequestMethod::METHOD_HEAD,
-        RequestMethod::METHOD_OPTIONS,
-    ];
-
-    /**
      * Standard HTTP methods against which to test HEAD/OPTIONS requests.
      */
     public const HTTP_METHODS_STANDARD = [
@@ -444,10 +435,6 @@ EOT;
             $methods = self::HTTP_METHODS_STANDARD;
         }
 
-        if (empty($methods)) {
-            $methods = self::HTTP_METHODS_EMPTY;
-        }
-
         $this->router->addRoute($methods, $route->getPath(), $route->getPath());
     }
 
@@ -536,7 +523,7 @@ EOT;
 
     private function marshalMethodNotAllowedResult(array $result) : RouteResult
     {
-        $path  = $result[1];
+        $path = $result[1];
         $allowedMethods = array_reduce($this->routes, function ($allowedMethods, $route) use ($path) {
             if ($path !== $route->getPath()) {
                 return $allowedMethods;
@@ -547,8 +534,6 @@ EOT;
 
         $allowedMethods = array_unique($allowedMethods);
 
-        return empty($allowedMethods)
-            ? RouteResult::fromRouteFailure(Route::METHOD_ANY)
-            : RouteResult::fromRouteFailure($allowedMethods);
+        return RouteResult::fromRouteFailure($allowedMethods);
     }
 }

@@ -134,24 +134,6 @@ class FastRouteRouterTest extends TestCase
         $router->generateUri($route->getName());
     }
 
-    public function testIfRouteSpecifiesNoHttpMethodsFastRouteIsPassedHardCodedListOfMethods()
-    {
-        $route = new Route('/foo', $this->getMiddleware(), []);
-        $this->fastRouter
-            ->addRoute(
-                FastRouteRouter::HTTP_METHODS_EMPTY,
-                '/foo',
-                '/foo'
-            )
-            ->shouldBeCalled();
-
-        $router = $this->getRouter();
-        $router->addRoute($route);
-
-        // routes are not injected until match or generateUri
-        $router->generateUri($route->getName());
-    }
-
     public function testMatchingRouteShouldReturnSuccessfulRouteResult()
     {
         $middleware = $this->getMiddleware();
@@ -332,7 +314,7 @@ class FastRouteRouterTest extends TestCase
     {
         $route = new Route('/foo', $this->getMiddleware(), [RequestMethod::METHOD_GET]);
 
-        $uri     = $this->prophesize(UriInterface::class);
+        $uri = $this->prophesize(UriInterface::class);
         $uri->getPath()->willReturn('/bar');
 
         $request = $this->prophesize(ServerRequestInterface::class);
