@@ -536,7 +536,7 @@ EOT;
 
     private function marshalMethodNotAllowedResult(array $result) : RouteResult
     {
-        $path  = $result[1];
+        $path = $result[1];
         $allowedMethods = array_reduce($this->routes, function ($allowedMethods, $route) use ($path) {
             if ($path !== $route->getPath()) {
                 return $allowedMethods;
@@ -547,6 +547,6 @@ EOT;
 
         $allowedMethods = array_unique($allowedMethods);
 
-        return RouteResult::fromRouteFailure($allowedMethods ?: Route::HTTP_METHOD_ANY);
+        return RouteResult::fromRouteFailure($allowedMethods ?: []);
     }
 }

@@ -12,11 +12,13 @@ namespace ZendTest\Expressive\Router;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
@@ -649,5 +651,31 @@ class FastRouteRouterTest extends TestCase
         $this->expectExceptionMessage('expects at least parameter values for');
 
         $router->generateUri('foo');
+    }
+
+    public function method() : Generator
+    {
+        foreach (FastRouteRouter::HTTP_METHODS_STANDARD as $method) {
+            yield $method => [$method];
+        }
+    }
+
+    /**
+     * @dataProvider method
+     */
+    public function testNoMethodsAllowedForRoute(string $method)
+    {
+        $router = new FastRouteRouter();
+        $route = new Route('/foo', $this->getMiddleware(), []);
+        $router->addRoute($route);
+
+        $request = new ServerRequest(['REQUEST_METHOD' => $method], [], '/foo', $method);
+
+        $result = $router->match($request);
+
+        $this->assertFalse($result->getMatchedRoute());
+        $this->assertSame([], $result->getAllowedMethods(), $method);
+        $this->assertTrue($result->isFailure());
+        $this->assertTrue($result->isMethodFailure());
     }
 }
