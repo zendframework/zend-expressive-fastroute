@@ -28,14 +28,17 @@ class FastRouteRouter implements RouterInterface
 <?php
 return %s;
 EOT;
+
     /**
      * @const string Configuration key used to enable/disable fastroute caching
      */
     const CONFIG_CACHE_ENABLED = 'cache_enabled';
+
     /**
      * @const string Configuration key used to set the cache file path
      */
     const CONFIG_CACHE_FILE = 'cache_file';
+
     /**
      * HTTP methods that always match when no methods provided.
      */
@@ -44,6 +47,7 @@ EOT;
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
+
     /**
      * HTTP methods implicitly supported by any route
      */
@@ -51,6 +55,7 @@ EOT;
         RequestMethod::METHOD_HEAD,
         RequestMethod::METHOD_OPTIONS,
     ];
+
     /**
      * Standard HTTP methods against which to test HEAD/OPTIONS requests.
      */
@@ -210,16 +215,16 @@ EOT;
         $dispatcher = $this->getDispatcher($dispatchData);
         $result     = $dispatcher->dispatch($method, $path);
 
-        if ($result[0] !== Dispatcher::FOUND
+        if ($result[0] === Dispatcher::METHOD_NOT_ALLOWED
             && in_array($method, self::HTTP_METHODS_IMPLICIT, true)
         ) {
-            $introspectionResult = $this->probeIntrospectionMethod($method, $path, $dispatcher);
-            if ($introspectionResult) {
-                return $this->marshalMatchedRoute($introspectionResult, $method);
+            if (false !== ($result = $this->probeIntrospectionMethod($method, $path, $dispatcher))) {
+                return $this->marshalImplicitMethodResult($method, $result);
             }
+            return $this->marshalFailedRoute($result);
         }
 
-        return ($result[0] !== Dispatcher::FOUND)
+        return $result[0] !== Dispatcher::FOUND
             ? $this->marshalFailedRoute($result)
             : $this->marshalMatchedRoute($result, $method);
     }
@@ -440,14 +445,7 @@ EOT;
             return RouteResult::fromRouteFailure();
         }
 
-        $params = $result[2];
-
-        $options = $route->getOptions();
-        if (! empty($options['defaults'])) {
-            $params = array_merge($options['defaults'], $params);
-        }
-
-        return RouteResult::fromRoute($route, $params);
+        return RouteResult::fromRoute($route, $this->marshalMatchedParams($route, $result));
     }
 
     /**
@@ -604,5 +602,65 @@ EOT;
         }
 
         return false;
+    }
+
+    /**
+     * @param string $method
+     * @return RouteResult
+     */
+    private function marshalIMplicitMethodResult($method, array $result)
+    {
+        $path = $result[1];
+        $route = array_reduce($this->routes, function ($matched, $route) use ($method, $path) {
+            if ($matched) {
+                return $matched;
+            }
+
+            if ($path !== $route->getPath()) {
+                return $matched;
+            }
+
+            return $route;
+        }, false);
+
+        $implicitRoute = new Route(
+            $path,
+            $route->getMiddleware(),
+            $this->marshalAllowedMethodsForPath($path),
+            $route->getName()
+        );
+        $implicitRoute->setOptions($route->getOptions());
+
+        return RouteResult::fromRoute(
+            $implicitRoute,
+            $this->marshalMatchedParams($implicitRoute, $result)
+        );
+    }
+
+    /**
+     * @param string $path
+     * @return array
+     */
+    private function marshalAllowedMethodsForPath($path)
+    {
+        $allowedMethods = array_reduce($this->routes, function ($allowedMethods, $route) use ($path) {
+            if ($path !== $route->getPath()) {
+                return $allowedMethods;
+            }
+
+            return array_merge($allowedMethods, $route->getAllowedMethods());
+        }, []);
+
+        return array_unique($allowedMethods);
+    }
+
+    private function marshalMatchedParams(Route $route, array $result)
+    {
+        $params = $result[2];
+        $options = $route->getOptions();
+        if (! empty($options['defaults'])) {
+            $params = array_merge($options['defaults'], $params);
+        }
+        return $params;
     }
 }

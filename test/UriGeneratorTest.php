@@ -11,6 +11,7 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
+use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
@@ -31,6 +32,11 @@ class UriGeneratorTest extends TestCase
      * @var callable
      */
     private $dispatchCallback;
+
+    /**
+     * @var MiddlewareInterface|ProphecyInterface
+     */
+    private $middleware;
 
     /**
      * @var FastRouteRouter
@@ -132,6 +138,8 @@ class UriGeneratorTest extends TestCase
             $this->fastRouter->reveal(),
             $this->dispatchCallback
         );
+
+        $this->middleware = $this->prophesize(MiddlewareInterface::class)->reveal();
     }
 
     /**
@@ -144,7 +152,7 @@ class UriGeneratorTest extends TestCase
      */
     public function testRoutes($path, $substitutions, $expected, $message)
     {
-        $this->router->addRoute(new Route($path, 'foo', ['GET'], 'foo'));
+        $this->router->addRoute(new Route($path, $this->middleware, ['GET'], 'foo'));
 
         if ($message !== null) {
             // Test exceptions
