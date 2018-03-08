@@ -32,12 +32,11 @@ EOT;
     /**
      * @const string Configuration key used to enable/disable fastroute caching
      */
-
     const CONFIG_CACHE_ENABLED = 'cache_enabled';
+
     /**
      * @const string Configuration key used to set the cache file path
      */
-
     const CONFIG_CACHE_FILE = 'cache_file';
 
     /**
