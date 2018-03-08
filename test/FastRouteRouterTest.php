@@ -427,7 +427,12 @@ class FastRouteRouterTest extends TestCase
 
     public function testOptionsPassedToGenerateUriOverrideThoseFromRoute()
     {
-        $route  = new Route('/page[/{page:\d+}/{locale:[a-z]{2}}[/optional-{extra:\w+}]]', $this->middleware, ['GET'], 'limit');
+        $route = new Route(
+            '/page[/{page:\d+}/{locale:[a-z]{2}}[/optional-{extra:\w+}]]',
+            $this->middleware,
+            ['GET'],
+            'limit'
+        );
         $route->setOptions(['defaults' => [
             'page'   => 1,
             'locale' => 'en',
