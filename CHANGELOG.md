@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.2.0 - 2018-03-08
+## 3.0.0rc4 - 2018-03-07
 
 ### Added
 
@@ -10,8 +10,163 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- [#52](https://github.com/zendframework/zend-expressive-fastroute/pull/52)
-  updates the minimum supported version of zend-expressive-router to 2.4.0.
+- [#51](https://github.com/zendframework/zend-expressive-fastroute/pull/51)
+  updates the minimum supported version of zend-expressive-router to 3.0.0rc4.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 3.0.0rc3 - 2018-03-07
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#50](https://github.com/zendframework/zend-expressive-fastroute/pull/50)
+  updates the minimum supported version of zend-expressive-router to 3.0.0rc3.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#50](https://github.com/zendframework/zend-expressive-fastroute/pull/50)
+  fixes a referenced constant from the zend-expressive-router package.
+
+## 3.0.0rc2 - 2018-03-06
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#49](https://github.com/zendframework/zend-expressive-fastroute/pull/49)
+  updates the minimum supported version of zend-expressive-router to 3.0.0rc2.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#49](https://github.com/zendframework/zend-expressive-fastroute/pull/49)
+  fixes how the router detects successful path-based matches when the HTTP
+  method is not supported, ensuring that a correct list of allowed HTTP methods
+  is generated for a route result failure.
+
+## 3.0.0rc1 - 2018-03-05
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#47](https://github.com/zendframework/zend-expressive-fastroute/pull/47)
+  updates the package to pin to zend-expressive-router 3.0.0rc1 or later.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#47](https://github.com/zendframework/zend-expressive-fastroute/pull/47)
+  fixes an issue with how a failure result is marshaled when the path patches
+  but the request method does not. The package now correctly aggregates allowed
+  methods for the route result failure instance.
+
+## 3.0.0alpha1 - 2018-02-06
+
+### Added
+
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41) and
+  [#46](https://github.com/zendframework/zend-expressive-fastroute/pull/46) add
+  support for the zend-expressive-router 3.0 series.
+
+- [#45](https://github.com/zendframework/zend-expressive-fastroute/pull/45) adds
+  `Zend\Expressive\Router\FastRouteRouter\ConfigProvider`, and updates the
+  package to expose it to zend-component-installer.
+
+### Changed
+
+- [#43](https://github.com/zendframework/zend-expressive-fastroute/pull/43)
+  updates the `match()` logic to always call `RouteResult::fromRouteFailure()`
+  with an argument; previously, it would omit the argument under specific
+  conditions.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41)
+  removes support for the zend-expressive-router 2.0 series.
+
+- [#41](https://github.com/zendframework/zend-expressive-fastroute/pull/41)
+  removes support for PHP 5.6 and PHP 7.0.
+
+### Fixed
+
+- Nothing.
+
+## 2.2.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.1.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
 
 ### Deprecated
 
