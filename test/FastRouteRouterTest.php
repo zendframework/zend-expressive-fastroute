@@ -632,4 +632,13 @@ class FastRouteRouterTest extends TestCase
 
         $router->generateUri('foo');
     }
+
+    public function testGenerateUriRaisesExceptionForNotFoundRoute()
+    {
+        $router = new FastRouteRouter();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('route not found');
+        $router->generateUri('foo');
+    }
 }

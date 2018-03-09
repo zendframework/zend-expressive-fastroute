@@ -101,7 +101,7 @@ EOT;
      *
      * @var Route[]
      */
-    private $routes;
+    private $routes = [];
 
     /**
      * Routes to inject into the underlying RouteCollector.
