@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.2.1 - 2018-03-09
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#53](https://github.com/zendframework/zend-expressive-fastroute/pull/53)
+  provides a default value of an empty array for the `FastRouteRouter::$routes`
+  property. When no routes were present, and `generateUri()` was called, the
+  previous `null` default would cause an error.
+
 ## 2.2.0 - 2018-03-08
 
 ### Added
