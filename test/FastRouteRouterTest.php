@@ -17,6 +17,7 @@ use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
+use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
@@ -640,5 +641,27 @@ class FastRouteRouterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('route not found');
         $router->generateUri('foo');
+    }
+
+    public function testRouteResultContainsDefaultAndMatchedParams()
+    {
+        $route = new Route('/foo/{id}', $this->getMiddleware());
+        $route->setOptions(['defaults' => ['bar' => 'baz']]);
+
+        $router = new FastRouteRouter();
+        $router->addRoute($route);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_GET],
+            [],
+            '/foo/my-id',
+            RequestMethod::METHOD_GET
+        );
+
+        $result = $router->match($request);
+
+        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isFailure());
+        $this->assertSame(['bar' => 'baz', 'id' => 'my-id'], $result->getMatchedParams());
     }
 }
