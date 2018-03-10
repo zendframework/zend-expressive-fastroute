@@ -664,4 +664,26 @@ class FastRouteRouterTest extends TestCase
         $this->assertFalse($result->isFailure());
         $this->assertSame(['bar' => 'baz', 'id' => 'my-id'], $result->getMatchedParams());
     }
+
+    public function testMatchedRouteParamsOverrideDefaultParams()
+    {
+        $route = new Route('/foo/{bar}', $this->getMiddleware());
+        $route->setOptions(['defaults' => ['bar' => 'baz']]);
+
+        $router = new FastRouteRouter();
+        $router->addRoute($route);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_GET],
+            [],
+            '/foo/var',
+            RequestMethod::METHOD_GET
+        );
+
+        $result = $router->match($request);
+
+        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isFailure());
+        $this->assertSame(['bar' => 'var'], $result->getMatchedParams());
+    }
 }
