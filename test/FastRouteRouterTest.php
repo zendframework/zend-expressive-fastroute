@@ -12,6 +12,7 @@ namespace ZendTest\Expressive\Router;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
 use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,6 +20,8 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Exception\InvalidArgumentException;
+use Zend\Expressive\Router\Exception\InvalidCacheDirectoryException;
+use Zend\Expressive\Router\Exception\InvalidCacheException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
@@ -708,5 +711,84 @@ class FastRouteRouterTest extends TestCase
         $this->assertTrue($result->isSuccess());
         $this->assertFalse($result->isFailure());
         $this->assertSame($route2, $result->getMatchedRoute());
+    }
+
+    public function testExceptionWhenCacheDirectoryDoesNotExist()
+    {
+        vfsStream::setup('root');
+
+        $router = new FastRouteRouter(null, null, [
+            FastRouteRouter::CONFIG_CACHE_ENABLED => true,
+            FastRouteRouter::CONFIG_CACHE_FILE => vfsStream::url('root/dir/cache-file'),
+        ]);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_GET],
+            [],
+            '/foo',
+            RequestMethod::METHOD_GET
+        );
+
+        $this->expectException(InvalidCacheDirectoryException::class);
+        $this->expectExceptionMessage('does not exist');
+        $router->match($request);
+    }
+
+    public function testExceptionWhenCacheDirectoryIsNotWritable()
+    {
+        $root = vfsStream::setup('root');
+        vfsStream::newDirectory('dir', 0)->at($root);
+
+        $router = new FastRouteRouter(null, null, [
+            FastRouteRouter::CONFIG_CACHE_ENABLED => true,
+            FastRouteRouter::CONFIG_CACHE_FILE => vfsStream::url('root/dir/cache-file'),
+        ]);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_GET],
+            [],
+            '/foo',
+            RequestMethod::METHOD_GET
+        );
+
+        $this->expectException(InvalidCacheDirectoryException::class);
+        $this->expectExceptionMessage('is not writable');
+        $router->match($request);
+    }
+
+    public function testExceptionWhenCacheFileExistsButIsNotWritable()
+    {
+        $root = vfsStream::setup('root');
+        $file = vfsStream::newFile('cache-file', 0)->at($root);
+
+        $router = new FastRouteRouter(null, null, [
+            FastRouteRouter::CONFIG_CACHE_ENABLED => true,
+            FastRouteRouter::CONFIG_CACHE_FILE => $file->url(),
+        ]);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_GET],
+            [],
+            '/foo',
+            RequestMethod::METHOD_GET
+        );
+
+        $this->expectException(InvalidCacheException::class);
+        $this->expectExceptionMessage('is not writable');
+        $router->match($request);
+    }
+
+    public function testExceptionWhenCacheFileExistsAndIsWritableButContainsNotAnArray()
+    {
+        $root = vfsStream::setup('root');
+        $file = vfsStream::newFile('cache-file')->at($root);
+        $file->setContent('<?php return "hello";');
+
+        $this->expectException(InvalidCacheException::class);
+        $this->expectExceptionMessage('MUST return an array');
+        new FastRouteRouter(null, null, [
+            FastRouteRouter::CONFIG_CACHE_ENABLED => true,
+            FastRouteRouter::CONFIG_CACHE_FILE => $file->url(),
+        ]);
     }
 }
