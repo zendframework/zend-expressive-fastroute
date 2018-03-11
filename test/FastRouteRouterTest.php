@@ -791,4 +791,32 @@ class FastRouteRouterTest extends TestCase
             FastRouteRouter::CONFIG_CACHE_FILE => $file->url(),
         ]);
     }
+
+    public function testGetAllAllowedMethods()
+    {
+        $route1 = new Route('/foo', $this->getMiddleware());
+        $route2 = new Route('/bar', $this->getMiddleware(), [RequestMethod::METHOD_GET, RequestMethod::METHOD_POST]);
+        $route3 = new Route('/bar', $this->getMiddleware(), [RequestMethod::METHOD_DELETE]);
+
+        $router = new FastRouteRouter();
+        $router->addRoute($route1);
+        $router->addRoute($route2);
+        $router->addRoute($route3);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_HEAD],
+            [],
+            '/bar',
+            RequestMethod::METHOD_HEAD
+        );
+
+        $result = $router->match($request);
+
+        $this->assertFalse($result->isSuccess());
+        $this->assertTrue($result->isFailure());
+        $this->assertSame(
+            [RequestMethod::METHOD_GET, RequestMethod::METHOD_POST, RequestMethod::METHOD_DELETE],
+            $result->getAllowedMethods()
+        );
+    }
 }
