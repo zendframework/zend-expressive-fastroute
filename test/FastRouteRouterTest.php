@@ -686,4 +686,27 @@ class FastRouteRouterTest extends TestCase
         $this->assertFalse($result->isFailure());
         $this->assertSame(['bar' => 'var'], $result->getMatchedParams());
     }
+
+    public function testMatchedCorrectRoute()
+    {
+        $route1 = new Route('/foo', $this->getMiddleware());
+        $route2 = new Route('/bar', $this->getMiddleware());
+
+        $router = new FastRouteRouter();
+        $router->addRoute($route1);
+        $router->addRoute($route2);
+
+        $request = new ServerRequest(
+            ['REQUEST_METHOD' => RequestMethod::METHOD_GET],
+            [],
+            '/bar',
+            RequestMethod::METHOD_GET
+        );
+
+        $result = $router->match($request);
+
+        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isFailure());
+        $this->assertSame($route2, $result->getMatchedRoute());
+    }
 }
