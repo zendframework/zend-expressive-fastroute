@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.0rc5 - TBD
+
+### Added
+
+- [#54](https://github.com/zendframework/zend-expressive-fastroute/pull/54)
+  adds a condition which throws a `InvalidCacheException` if a cache file
+  exists and is not writable.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 3.0.0rc4 - 2018-03-07
 
 ### Added
