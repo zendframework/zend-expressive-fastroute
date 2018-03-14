@@ -496,6 +496,8 @@ EOT;
      *     does not exist.
      * @throws Exception\InvalidCacheDirectoryException If the cache directory
      *     is not writable.
+     * @throws Exception\InvalidCacheException If the cache file exists but is
+     *     not writable
      */
     private function cacheDispatchData(array $dispatchData)
     {
@@ -512,6 +514,13 @@ EOT;
             throw new Exception\InvalidCacheDirectoryException(sprintf(
                 'The cache directory "%s" is not writable',
                 $cacheDir
+            ));
+        }
+
+        if (file_exists($this->cacheFile) && ! is_writable($this->cacheFile)) {
+            throw new Exception\InvalidCacheException(sprintf(
+                'The cache file %s is not writable',
+                $this->cacheFile
             ));
         }
 
