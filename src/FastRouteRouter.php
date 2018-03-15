@@ -18,6 +18,28 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\Exception;
 use Zend\Stdlib\ArrayUtils;
 
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_reduce;
+use function array_reverse;
+use function array_unique;
+use function dirname;
+use function file_exists;
+use function file_put_contents;
+use function implode;
+use function is_array;
+use function is_dir;
+use function is_string;
+use function is_writable;
+use function preg_match;
+use function restore_error_handler;
+use function set_error_handler;
+use function sprintf;
+use function var_export;
+
+use const E_WARNING;
+
 /**
  * Router implementation bridging nikic/fast-route.
  */
