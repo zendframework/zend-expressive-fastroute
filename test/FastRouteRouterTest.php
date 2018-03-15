@@ -26,6 +26,10 @@ use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 
+use function file_get_contents;
+use function is_file;
+use function unlink;
+
 class FastRouteRouterTest extends TestCase
 {
     /**
