@@ -19,9 +19,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\ServerRequest;
-use Zend\Expressive\Router\Exception\InvalidArgumentException;
 use Zend\Expressive\Router\Exception\InvalidCacheDirectoryException;
 use Zend\Expressive\Router\Exception\InvalidCacheException;
+use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
@@ -631,7 +631,7 @@ class FastRouteRouterTest extends TestCase
         $route = new Route('/foo/{id}', $this->getMiddleware(), [RequestMethod::METHOD_GET], 'foo');
         $router->addRoute($route);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('expects at least parameter values for');
 
         $router->generateUri('foo');
@@ -641,7 +641,7 @@ class FastRouteRouterTest extends TestCase
     {
         $router = new FastRouteRouter();
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('route not found');
         $router->generateUri('foo');
     }

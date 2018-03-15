@@ -211,7 +211,7 @@ EOT;
      *     in route used to generate URI.
      *
      * @return string URI path generated.
-     * @throws Exception\InvalidArgumentException if the route name is not known
+     * @throws Exception\RuntimeException if the route name is not known
      *     or a parameter value does not match its regex.
      */
     public function generateUri(string $name, array $substitutions = [], array $options = []) : string
@@ -220,7 +220,7 @@ EOT;
         $this->injectRoutes();
 
         if (! array_key_exists($name, $this->routes)) {
-            throw new Exception\InvalidArgumentException(sprintf(
+            throw new Exception\RuntimeException(sprintf(
                 'Cannot generate URI for route "%s"; route not found',
                 $name
             ));
@@ -258,7 +258,7 @@ EOT;
 
                 // Check substitute value with regex
                 if (! preg_match('~^' . $part[1] . '$~', (string) $substitutions[$part[0]])) {
-                    throw new Exception\InvalidArgumentException(sprintf(
+                    throw new Exception\RuntimeException(sprintf(
                         'Parameter value for [%s] did not match the regex `%s`',
                         $part[0],
                         $part[1]
@@ -274,7 +274,7 @@ EOT;
         }
 
         // No valid route was found: list minimal required parameters
-        throw new Exception\InvalidArgumentException(sprintf(
+        throw new Exception\RuntimeException(sprintf(
             'Route `%s` expects at least parameter values for [%s], but received [%s]',
             $name,
             implode(',', $missingParameters),
