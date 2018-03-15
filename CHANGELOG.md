@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 3.0.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#56](https://github.com/zendframework/zend-expressive-fastroute/pull/56)
+  makes the router use the exception documented in `RouterInterface`.
+
 ## 3.0.0rc5 - TBD
 
 ### Added
@@ -24,8 +47,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- [#56](https://github.com/zendframework/zend-expressive-fastroute/pull/56)
-  makes the router use the exception documented in `RouterInterface`.
+- Nothing.
 
 ## 3.0.0rc4 - 2018-03-07
 
