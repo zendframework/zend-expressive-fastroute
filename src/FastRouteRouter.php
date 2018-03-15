@@ -15,7 +15,6 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Expressive\Router\Exception;
 use Zend\Stdlib\ArrayUtils;
 
 use function array_key_exists;
