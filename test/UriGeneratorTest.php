@@ -14,7 +14,7 @@ use FastRoute\RouteCollector;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Zend\Expressive\Router\Exception\InvalidArgumentException;
+use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
 
@@ -74,7 +74,7 @@ class UriGeneratorTest extends TestCase
             [
                 '/test/{param}',
                 ['id' => 'foo'],
-                InvalidArgumentException::class,
+                RuntimeException::class,
                 'expects at least parameter values for',
             ],
 
@@ -91,7 +91,7 @@ class UriGeneratorTest extends TestCase
             [
                 '/test/{ param : \d{1,9} }',
                 ['param' => 1234567890],
-                InvalidArgumentException::class,
+                RuntimeException::class,
                 'Parameter value for [param] did not match the regex `\d{1,9}`',
             ],
 
@@ -109,7 +109,7 @@ class UriGeneratorTest extends TestCase
             [
                 '/test[/{param}[/{id:[0-9]+}]]',
                 ['param' => 'foo', 'id' => 'foo'],
-                InvalidArgumentException::class,
+                RuntimeException::class,
                 'Parameter value for [id] did not match the regex `[0-9]+`',
             ],
 

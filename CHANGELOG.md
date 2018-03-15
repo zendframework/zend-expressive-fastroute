@@ -24,7 +24,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#56](https://github.com/zendframework/zend-expressive-fastroute/pull/56)
+  makes the router use the exception documented in `RouterInterface`.
 
 ## 3.0.0rc4 - 2018-03-07
 
