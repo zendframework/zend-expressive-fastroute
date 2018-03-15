@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-fastroute for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-fastroute/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
@@ -11,8 +13,8 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ProphecyInterface;
-use Webimpress\HttpMiddlewareCompatibility\MiddlewareInterface;
-use Zend\Expressive\Router\Exception\InvalidArgumentException;
+use Psr\Http\Server\MiddlewareInterface;
+use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route;
 
@@ -32,11 +34,6 @@ class UriGeneratorTest extends TestCase
      * @var callable
      */
     private $dispatchCallback;
-
-    /**
-     * @var MiddlewareInterface|ProphecyInterface
-     */
-    private $middleware;
 
     /**
      * @var FastRouteRouter
@@ -77,7 +74,7 @@ class UriGeneratorTest extends TestCase
             [
                 '/test/{param}',
                 ['id' => 'foo'],
-                InvalidArgumentException::class,
+                RuntimeException::class,
                 'expects at least parameter values for',
             ],
 
@@ -94,7 +91,7 @@ class UriGeneratorTest extends TestCase
             [
                 '/test/{ param : \d{1,9} }',
                 ['param' => 1234567890],
-                InvalidArgumentException::class,
+                RuntimeException::class,
                 'Parameter value for [param] did not match the regex `\d{1,9}`',
             ],
 
@@ -112,7 +109,7 @@ class UriGeneratorTest extends TestCase
             [
                 '/test[/{param}[/{id:[0-9]+}]]',
                 ['param' => 'foo', 'id' => 'foo'],
-                InvalidArgumentException::class,
+                RuntimeException::class,
                 'Parameter value for [id] did not match the regex `[0-9]+`',
             ],
 
@@ -138,8 +135,11 @@ class UriGeneratorTest extends TestCase
             $this->fastRouter->reveal(),
             $this->dispatchCallback
         );
+    }
 
-        $this->middleware = $this->prophesize(MiddlewareInterface::class)->reveal();
+    private function getMiddleware() : MiddlewareInterface
+    {
+        return $this->prophesize(MiddlewareInterface::class)->reveal();
     }
 
     /**
@@ -152,7 +152,7 @@ class UriGeneratorTest extends TestCase
      */
     public function testRoutes($path, $substitutions, $expected, $message)
     {
-        $this->router->addRoute(new Route($path, $this->middleware, ['GET'], 'foo'));
+        $this->router->addRoute(new Route($path, $this->getMiddleware(), ['GET'], 'foo'));
 
         if ($message !== null) {
             // Test exceptions
