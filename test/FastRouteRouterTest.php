@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
+use FastRoute\Dispatcher\CharCountBased;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
+use FastRoute\Dispatcher\GroupPosBased;
 use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use org\bovigo\vfs\vfsStream;
@@ -822,5 +824,27 @@ class FastRouteRouterTest extends TestCase
             [RequestMethod::METHOD_GET, RequestMethod::METHOD_POST, RequestMethod::METHOD_DELETE],
             $result->getAllowedMethods()
         );
+    }
+
+    public function testUserDefinedDispatcherCallbackGroupPosBased()
+    {
+        $route1 = new Route('/foo', $this->getMiddleware());
+
+        $router = new FastRouteRouter(null, function($data) {
+            return new GroupPosBased($data);
+        });
+        $router->addRoute($route1);
+
+        $request = new ServerRequest(
+            [],
+            [],
+            '/foo',
+            RequestMethod::METHOD_GET
+        );
+
+        $result = $router->match($request);
+
+        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isFailure());
     }
 }

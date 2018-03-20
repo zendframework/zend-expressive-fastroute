@@ -11,6 +11,7 @@ namespace Zend\Expressive\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
 use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
+use FastRoute\Dispatcher as DispatcherInterface;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
@@ -352,9 +353,9 @@ EOT;
      *
      * @param array|object $data Data from RouteCollection::getData()
      *
-     * @return Dispatcher
+     * @return DispatcherInterface
      */
-    private function getDispatcher($data) : Dispatcher
+    private function getDispatcher($data) : DispatcherInterface
     {
         if (! $this->dispatcherCallback) {
             $this->dispatcherCallback = $this->createDispatcherCallback();
