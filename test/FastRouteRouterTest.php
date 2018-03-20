@@ -836,9 +836,7 @@ class FastRouteRouterTest extends TestCase
                 []
             ]);
 
-        $router = new FastRouteRouter(null, function ($data) use ($dispatcher) {
-            return $dispatcher->reveal();
-        });
+        $router = new FastRouteRouter(null, [$dispatcher, 'reveal']);
         $router->addRoute($route1);
 
         $request = new ServerRequest([], [], '/foo');
