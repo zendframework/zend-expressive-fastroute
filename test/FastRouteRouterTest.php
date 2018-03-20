@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
-use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
+use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use org\bovigo\vfs\vfsStream;
@@ -822,5 +822,28 @@ class FastRouteRouterTest extends TestCase
             [RequestMethod::METHOD_GET, RequestMethod::METHOD_POST, RequestMethod::METHOD_DELETE],
             $result->getAllowedMethods()
         );
+    }
+
+    public function testCustomDispatcherCallback()
+    {
+        $route1 = new Route('/foo', $this->getMiddleware());
+        $dispatcher = $this->prophesize(Dispatcher::class);
+        $dispatcher
+            ->dispatch(RequestMethod::METHOD_GET, '/foo')
+            ->shouldBeCalled()
+            ->willReturn([
+                Dispatcher::FOUND,
+                '/foo',
+                []
+            ]);
+
+        $router = new FastRouteRouter(null, [$dispatcher, 'reveal']);
+        $router->addRoute($route1);
+
+        $request = new ServerRequest([], [], '/foo');
+        $result = $router->match($request);
+
+        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isFailure());
     }
 }

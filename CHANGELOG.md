@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 3.0.1 - TBD
+## 3.0.1 - 2018-03-20
 
 ### Added
 
@@ -22,7 +22,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#57](https://github.com/zendframework/zend-expressive-fastroute/pull/57)
+  fixes how the `FastRouteRouter::getDispatcher()` method defines its return
+  type hint to define it using the `FastRoute\Dispatcher` interface instead of
+  the more specific `GroupCountBased` implementation; this change allows usage
+  of alternate dispatchers with the router.
 
 ## 3.0.0 - 2018-03-15
 

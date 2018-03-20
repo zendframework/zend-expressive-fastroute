@@ -10,7 +10,8 @@ declare(strict_types=1);
 namespace Zend\Expressive\Router;
 
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
-use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
+use FastRoute\Dispatcher\GroupCountBased;
+use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as RouteParser;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
@@ -371,7 +372,7 @@ EOT;
     private function createDispatcherCallback() : callable
     {
         return function ($data) {
-            return new Dispatcher($data);
+            return new GroupCountBased($data);
         };
     }
 
