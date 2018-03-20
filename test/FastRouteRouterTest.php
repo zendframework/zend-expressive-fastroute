@@ -829,7 +829,7 @@ class FastRouteRouterTest extends TestCase
     {
         $route1 = new Route('/foo', $this->getMiddleware());
 
-        $router = new FastRouteRouter(null, function($data) {
+        $router = new FastRouteRouter(null, function ($data) {
             return new GroupPosBased($data);
         });
         $router->addRoute($route1);
