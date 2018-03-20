@@ -15,6 +15,7 @@ use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -825,12 +826,20 @@ class FastRouteRouterTest extends TestCase
         );
     }
 
-    public function testUserDefinedDispatcherCallbackGroupPosBased()
+    public function testCustomDispatcherCallback()
     {
         $route1 = new Route('/foo', $this->getMiddleware());
+        $dispatcher = $this->prophesize(Dispatcher::class);
+        $dispatcher->dispatch(RequestMethod::METHOD_GET, '/foo')
+            ->shouldBeCalled()
+            ->willReturn([
+                Dispatcher::FOUND,
+                '/foo',
+                []
+            ]);
 
-        $router = new FastRouteRouter(null, function ($data) {
-            return new GroupPosBased($data);
+        $router = new FastRouteRouter(null, function ($data) use ($dispatcher) {
+            return $dispatcher->reveal();
         });
         $router->addRoute($route1);
 
