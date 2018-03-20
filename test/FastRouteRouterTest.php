@@ -10,12 +10,10 @@ declare(strict_types=1);
 namespace ZendTest\Expressive\Router;
 
 use FastRoute\Dispatcher;
-use FastRoute\Dispatcher\GroupPosBased;
 use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
