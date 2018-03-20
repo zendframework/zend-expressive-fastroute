@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace ZendTest\Expressive\Router;
 
-use FastRoute\Dispatcher\GroupCountBased as Dispatcher;
+use FastRoute\Dispatcher;
 use FastRoute\Dispatcher\GroupPosBased;
 use FastRoute\RouteCollector;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
