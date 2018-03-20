@@ -834,13 +834,7 @@ class FastRouteRouterTest extends TestCase
         });
         $router->addRoute($route1);
 
-        $request = new ServerRequest(
-            [],
-            [],
-            '/foo',
-            RequestMethod::METHOD_GET
-        );
-
+        $request = new ServerRequest([], [], '/foo');
         $result = $router->match($request);
 
         $this->assertTrue($result->isSuccess());
