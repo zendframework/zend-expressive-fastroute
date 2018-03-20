@@ -828,7 +828,8 @@ class FastRouteRouterTest extends TestCase
     {
         $route1 = new Route('/foo', $this->getMiddleware());
         $dispatcher = $this->prophesize(Dispatcher::class);
-        $dispatcher->dispatch(RequestMethod::METHOD_GET, '/foo')
+        $dispatcher
+            ->dispatch(RequestMethod::METHOD_GET, '/foo')
             ->shouldBeCalled()
             ->willReturn([
                 Dispatcher::FOUND,
