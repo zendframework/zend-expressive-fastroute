@@ -187,6 +187,45 @@ class FastRouteRouterTest extends TestCase
         $this->assertSame($route, $result->getMatchedRoute());
     }
 
+    public function matchWithUrlEncodedSpecialCharsDataProvider()
+    {
+        return [
+            ['/foo/{id:.+}', '/foo/b%20ar', 'b ar'],
+            ['/foo/{id:.+}', '/foo/b%2Fr', 'b/r'],
+            ['/foo/{id:.+}', '/foo/bar-%E6%B8%AC%E8%A9%A6', 'bar-測試'],
+            ['/foo/{id:bär}', '/foo/b%C3%A4r', 'bär'],
+            ['/foo/{id:bär}', '/foo/bär', 'bär'],
+        ];
+    }
+
+    /**
+     * @dataProvider matchWithUrlEncodedSpecialCharsDataProvider
+     *
+     * @param string $routePath
+     * @param string $requestPath
+     * @param string $expectedId
+     */
+    public function testMatchWithUrlEncodedSpecialChars($routePath, $requestPath, $expectedId)
+    {
+        $request = $this->createServerRequestProphecy($requestPath, RequestMethod::METHOD_GET);
+
+        $route = new Route($routePath, $this->getMiddleware(), [RequestMethod::METHOD_GET], 'foo');
+
+        $router = new FastRouteRouter();
+        $router->addRoute($route);
+
+        $routeResult = $router->match($request->reveal());
+
+        $this->assertTrue($routeResult->isSuccess());
+        $this->assertSame('foo', $routeResult->getMatchedRouteName());
+        $this->assertSame(
+            [
+                'id' => $expectedId,
+            ],
+            $routeResult->getMatchedParams()
+        );
+    }
+
     public function idemPotentMethods()
     {
         return [
