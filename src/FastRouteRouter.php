@@ -208,7 +208,7 @@ EOT;
 
         $dispatchData = $this->getDispatchData();
 
-        $path       = $request->getUri()->getPath();
+        $path       = rawurldecode($request->getUri()->getPath());
         $method     = $request->getMethod();
         $dispatcher = $this->getDispatcher($dispatchData);
         $result     = $dispatcher->dispatch($method, $path);
