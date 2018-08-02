@@ -187,20 +187,23 @@ class FastRouteRouterTest extends TestCase
         $this->assertSame($route, $result->getMatchedRoute());
     }
 
+    /**
+     * @return array
+     */
     public function matchWithUrlEncodedSpecialCharsDataProvider()
     {
         return [
-            ['/foo/{id:.+}', '/foo/b%20ar', 'b ar'],
-            ['/foo/{id:.+}', '/foo/b%2Fr', 'b/r'],
-            ['/foo/{id:.+}', '/foo/bar-%E6%B8%AC%E8%A9%A6', 'bar-測試'],
-            ['/foo/{id:bär}', '/foo/b%C3%A4r', 'bär'],
-            ['/foo/{id:bär}', '/foo/bär', 'bär'],
+            'encoded-space'   => ['/foo/{id:.+}', '/foo/b%20ar', 'b ar'],
+            'encoded-slash'   => ['/foo/{id:.+}', '/foo/b%2Fr', 'b/r'],
+            'encoded-unicode' => ['/foo/{id:.+}', '/foo/bar-%E6%B8%AC%E8%A9%A6', 'bar-測試'],
+            'encoded-regex'   => ['/foo/{id:bär}', '/foo/b%C3%A4r', 'bär'],
+            'unencoded-regex' => ['/foo/{id:bär}', '/foo/bär', 'bär'],
         ];
     }
 
     /**
+     * @see https://github.com/zendframework/zend-expressive-fastroute/pull/59
      * @dataProvider matchWithUrlEncodedSpecialCharsDataProvider
-     *
      * @param string $routePath
      * @param string $requestPath
      * @param string $expectedId
@@ -219,9 +222,7 @@ class FastRouteRouterTest extends TestCase
         $this->assertTrue($routeResult->isSuccess());
         $this->assertSame('foo', $routeResult->getMatchedRouteName());
         $this->assertSame(
-            [
-                'id' => $expectedId,
-            ],
+            ['id' => $expectedId ],
             $routeResult->getMatchedParams()
         );
     }
