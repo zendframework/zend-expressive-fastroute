@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 3.0.2 - TBD
+## 3.0.2 - 2018-08-02
 
 ### Added
 
@@ -22,7 +22,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#59](https://github.com/zendframework/zend-expressive-fastroute/pull/59) modifies the `FastRouteRouter` to pass the URI path to `rawurldecode()` prior to performing
+  its regex operations. This ensures that URL-encoded values can be matched as normal characters.
+  If you were previously performing matches for URL-encoded values (e.g., `{id:b%20r}`), you may
+  need to update your route matching expressions (e.g., `{id:b r}`).
 
 ## 3.0.1 - 2018-03-20
 
