@@ -18,7 +18,6 @@ use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stdlib\ArrayUtils;
 
-use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_reduce;
@@ -241,7 +240,7 @@ EOT;
         // Inject any pending routes
         $this->injectRoutes();
 
-        if (! array_key_exists($name, $this->routes)) {
+        if (! isset($this->routes[$name])) {
             throw new Exception\RuntimeException(sprintf(
                 'Cannot generate URI for route "%s"; route not found',
                 $name
