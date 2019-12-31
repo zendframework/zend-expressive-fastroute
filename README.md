@@ -1,5 +1,9 @@
 # FastRoute integration for Expressive
 
+> ## Repository abandoned 2019-12-31
+>
+> This repository has moved to mezzio/mezzio-fastroute.
+
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-expressive-fastroute.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-expressive-fastroute)
 [![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-expressive-fastroute/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-expressive-fastroute?branch=master)
 
