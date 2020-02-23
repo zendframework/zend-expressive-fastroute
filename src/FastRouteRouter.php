@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Zend\Expressive\Router;
 
+use Closure;
 use FastRoute\DataGenerator\GroupCountBased as RouteGenerator;
 use FastRoute\Dispatcher\GroupCountBased;
 use FastRoute\Dispatcher;
@@ -188,6 +189,8 @@ EOT;
             $this->loadDispatchData();
         }
     }
+
+
 
     /**
      * Add a route to the collection.
